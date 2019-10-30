@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_alert/flutter_alert.dart';
+import 'package:laundry/util/nav_service.dart';
+import 'package:laundry/util/session.dart';
 import 'package:laundry/util/validator.dart';
 import 'package:responsive_screen/responsive_screen.dart';
 
@@ -14,7 +17,7 @@ class _ProfilePageState extends State<ProfilePage> with ValidationMixin{
   Widget build(BuildContext context) {
     final Function wp = Screen(context).wp;
     final Function hp = Screen(context).hp;
-    
+
     return Scaffold(
       key: _key,
       appBar: AppBar(
@@ -23,7 +26,27 @@ class _ProfilePageState extends State<ProfilePage> with ValidationMixin{
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.exit_to_app, color: Colors.white),
-            onPressed: () => null,
+            onPressed: () {
+              showAlert(
+                context: context,
+                title: "Logout",
+                body: "Apakah Anda yakin ingin keluar?",
+                barrierDismissible: false,
+                actions: [
+                  AlertAction(
+                    text: "Cancel",
+                    onPressed: () => null
+                  ),
+                  AlertAction(
+                    text: "Lanjutkan",
+                    onPressed: () {
+                      sessions.clear();
+                      navService.navigateReplaceTo("/login");
+                    }
+                  ),
+                ]
+              );
+            },
           )
         ],
       ),
