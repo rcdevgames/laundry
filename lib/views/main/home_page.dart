@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:laundry/util/nav_service.dart';
 import 'package:responsive_screen/responsive_screen.dart';
 
 class HomePage extends StatelessWidget {
@@ -58,7 +59,7 @@ class HomePage extends StatelessWidget {
             // physics: NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 1.8),
             children: <Widget>[
-              cardButton(title: "Produk", color: Colors.red, icon: FontAwesomeIcons.tshirt, onTap: () => null),
+              cardButton(title: "Produk", color: Colors.red, icon: FontAwesomeIcons.tshirt, onTap: () => navService.navigateTo("/products")),
               cardButton(title: "Customer", color: Colors.deepPurple, icon: FontAwesomeIcons.userFriends, onTap: () => null),
               cardButton(title: "Pengeluaran", color: Colors.lightGreen, icon: FontAwesomeIcons.moneyBillWave, onTap: () => null),
               cardButton(title: "Pengembalian", color: Colors.lightBlue, icon: FontAwesomeIcons.undo, onTap: () => null),

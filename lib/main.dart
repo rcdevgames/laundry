@@ -12,6 +12,7 @@ void main() async {
   //Status Bar Color
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.lightBlueAccent,
+    statusBarBrightness: Brightness.dark
   ));
   final auth = await sessions.checkAuth();
   return runApp(MyApp(auth));
@@ -29,7 +30,10 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Loandry',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(primarySwatch: Colors.lightBlue),
+        theme: ThemeData(
+          primarySwatch: Colors.lightBlue,
+          appBarTheme: AppBarTheme(brightness: Brightness.dark)
+        ),
         navigatorKey: navService.navigatorKey,
         onGenerateRoute: Routes.generateRoute,
         home: auth ? new LayoutPage() : new LoginPage()

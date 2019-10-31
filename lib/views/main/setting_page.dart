@@ -10,6 +10,36 @@ class SettingPage extends StatefulWidget {
 class _SettingPageState extends State<SettingPage> with ValidationMixin {
   final _key = new GlobalKey<ScaffoldState>();
 
+
+  Widget input({
+    TextEditingController controller, 
+    @required String title, 
+    void Function(String) onSaved, 
+    String Function(String) validator,
+    bool enabled,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(26, 10, 26, 5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(title),
+          SizedBox(height: 3),
+          TextFormField(
+            controller: controller,
+            validator: validator,
+            onSaved: onSaved,
+            enabled: enabled,
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+              border: OutlineInputBorder(borderSide: BorderSide(width: 1))
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final Function wp = Screen(context).wp;
@@ -29,8 +59,9 @@ class _SettingPageState extends State<SettingPage> with ValidationMixin {
           ),
           child: SizedBox(
             width: double.infinity,
-            height: hp(40),
+            height: hp(55),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
                   width: double.infinity,
@@ -39,6 +70,36 @@ class _SettingPageState extends State<SettingPage> with ValidationMixin {
                   decoration: BoxDecoration(
                     color: Colors.lightBlue,
                     borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))
+                  ),
+                ),
+                input(
+                  title: "Nama Toko",
+                  validator: validateRequired
+                ),
+                input(
+                  title: "Alamat",
+                  validator: validateRequired
+                ),
+                input(
+                  title: "Nomor Telpon",
+                  validator: validateRequired
+                ),
+                input(
+                  title: "Email",
+                  validator: validateRequired
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(26, 10, 26, 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      RaisedButton(
+                        color: Colors.lightBlue,
+                        onPressed: () => null,
+                        child: Text("Simpan Perubahan", style: TextStyle(color: Colors.white)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                      ),
+                    ],
                   ),
                 )
               ],

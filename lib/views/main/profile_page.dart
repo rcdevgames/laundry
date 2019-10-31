@@ -66,7 +66,7 @@ class _ProfilePageState extends State<ProfilePage> with ValidationMixin{
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                      child: Text("Keterangan Nota", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                      child: Text("Profile Pengguna", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
                       decoration: BoxDecoration(
                         color: Colors.lightBlue,
                         borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))
@@ -91,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage> with ValidationMixin{
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                      child: Text("Keterangan Nota", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                      child: Text("Profil Perusahaan", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
                       decoration: BoxDecoration(
                         color: Colors.lightBlue,
                         borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))
@@ -116,7 +116,7 @@ class _ProfilePageState extends State<ProfilePage> with ValidationMixin{
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                      child: Text("Keterangan Nota", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                      child: Text("Ganti Password", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
                       decoration: BoxDecoration(
                         color: Colors.lightBlue,
                         borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))
