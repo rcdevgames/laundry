@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:laundry/blocs/login_bloc.dart';
 import 'package:laundry/util/validator.dart';
 import 'package:laundry/widget/loading.dart';
+import 'package:laundry/widget/top_shape.dart';
 import 'package:responsive_screen/responsive_screen.dart';
 
 class LoginPage extends StatefulWidget {
@@ -31,16 +32,21 @@ class _LoginPageState extends State<LoginPage> with ValidationMixin {
             key: _form,
             child: ListView(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 30, 0, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Text("Logo", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 28))
-                    ],
-                  ),
+                Stack(
+                  children: <Widget>[
+                    TopBar(),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Text("Logo", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 28))
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(height: hp(20)),
+                SizedBox(height: hp(5)),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 35),
                   child: TextFormField(

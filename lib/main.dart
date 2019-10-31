@@ -9,6 +9,10 @@ import 'package:laundry/views/auth/login_page.dart';
 import 'package:laundry/views/main/layout_page.dart';
 
 void main() async {
+  //Status Bar Color
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.lightBlueAccent,
+  ));
   final auth = await sessions.checkAuth();
   return runApp(MyApp(auth));
 }
