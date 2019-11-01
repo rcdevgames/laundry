@@ -13,6 +13,36 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> with ValidationMixin{
   final _key = new GlobalKey<ScaffoldState>();
 
+  Widget input({
+    TextEditingController controller, 
+    @required String title, 
+    void Function(String) onSaved, 
+    String Function(String) validator,
+    bool enabled,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(26, 10, 26, 5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(title),
+          SizedBox(height: 3),
+          TextFormField(
+            controller: controller,
+            validator: validator,
+            onSaved: onSaved,
+            enabled: enabled,
+            obscureText: true,
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+              border: OutlineInputBorder(borderSide: BorderSide(width: 1))
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final Function wp = Screen(context).wp;
@@ -60,57 +90,7 @@ class _ProfilePageState extends State<ProfilePage> with ValidationMixin{
               ),
               child: SizedBox(
                 width: double.infinity,
-                height: hp(40),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                      child: Text("Profile Pengguna", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
-                      decoration: BoxDecoration(
-                        color: Colors.lightBlue,
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)
-              ),
-              child: SizedBox(
-                width: double.infinity,
-                height: hp(40),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                      child: Text("Profil Perusahaan", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
-                      decoration: BoxDecoration(
-                        color: Colors.lightBlue,
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)
-              ),
-              child: SizedBox(
-                width: double.infinity,
-                height: hp(40),
+                height: hp(50),
                 child: Column(
                   children: <Widget>[
                     Container(
@@ -120,6 +100,32 @@ class _ProfilePageState extends State<ProfilePage> with ValidationMixin{
                       decoration: BoxDecoration(
                         color: Colors.lightBlue,
                         borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))
+                      ),
+                    ),
+                    input(
+                      title: "Password Lama",
+                      validator: validateRequired
+                    ),
+                    input(
+                      title: "Password Baru",
+                      validator: validateRequired
+                    ),
+                    input(
+                      title: "Konfirmasi Password Baru",
+                      validator: validateRequired
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(26, 10, 26, 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          RaisedButton(
+                            color: Colors.lightBlue,
+                            onPressed: () => null,
+                            child: Text("Simpan Perubahan", style: TextStyle(color: Colors.white)),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                          ),
+                        ],
                       ),
                     )
                   ],

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' show Client, Response;
+// import 'package:http/http.dart';
 import 'package:http_client_helper/http_client_helper.dart';
 import 'package:laundry/util/session.dart';
 
@@ -10,15 +11,14 @@ class Api {
     'Accept': 'application/json'
   };
 
-  Future<Response> post(String endpoint, {bool auth = false, Map<String, dynamic> body, CancellationToken token}) async {
+  Future<Response> post(String endpoint, {bool auth = false, Map<String, dynamic> body}) async {
     var auth_data = await sessions.loadAuth();
-    requestHeaders['Content-type'] = 'multipart/form-data';
     if (auth == true && auth_data != null) requestHeaders['Authorization'] = "Bearer ${auth_data}";
-    return await HttpClientHelper.post("http://laundry.sinudtech.web.id/api/$endpoint", headers: requestHeaders, body: body, cancelToken: token);
+    return client.post("http://laundry.sinudtech.web.id/api/v1/$endpoint", headers: requestHeaders, body: jsonEncode(body));
   }
   
   Future<Response> oAuth({Map<String, dynamic> body}) async {
-    return HttpClientHelper.post("http://laundry.sinudtech.web.id/api/user/login", body: body);
+    return client.post("http://laundry.sinudtech.web.id/api/user/login", body: jsonEncode(body));
   }
   
   String getContent(String data) {
@@ -29,6 +29,11 @@ class Api {
   String getError(String data) {
     var result = jsonDecode(data)['error'];
     return result;
+  }
+
+  close() {
+    client.close();
+    client = new Client();
   }
   
 }

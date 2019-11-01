@@ -30,8 +30,8 @@ class LayoutPageState extends State<LayoutPage> {
           switch (page) {
             case 0: return new HomePage();
             case 1: return new TransactionPage();
-            case 2: return new SettingPage();
-            case 3: return new ProfilePage();
+            // case 2: return new SettingPage();
+            case 2: return new ProfilePage();
             default: return Container();
           }
         },
@@ -49,10 +49,10 @@ class LayoutPageState extends State<LayoutPage> {
             icon: Icon(FontAwesomeIcons.listAlt),
             title: Text("Transaksi")
           ),
-          BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.cog),
-            title: Text("Pengaturan")
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(FontAwesomeIcons.cog),
+          //   title: Text("Pengaturan")
+          // ),
           BottomNavigationBarItem(
             icon: Icon(FontAwesomeIcons.userAlt),
             title: Text("Akun")

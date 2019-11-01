@@ -72,7 +72,22 @@ class _LoginPageState extends State<LoginPage> with ValidationMixin {
                     ),
                   ),
                 ),
-                SizedBox(height: hp(3)),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(35, 10, 35, 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      StreamBuilder(
+                        initialData: "",
+                        stream: bloc.getVersion,
+                        builder: (context, snapshot) {
+                          return Text(snapshot.data, style: TextStyle(fontSize: 12, color: Colors.black45));
+                        }
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(height: hp(2)),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40),
                   child: RaisedButton(

@@ -14,8 +14,13 @@ class ErrorPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Icon(Icons.error_outline, size: 30),
-          Text(message),
+          Icon(Icons.error_outline, size: 60, color: Colors.red,),
+          SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: Text(message),
+          ),
+          SizedBox(height: 20),
           RaisedButton(
             child: Text(buttonText, style: TextStyle(color: Colors.white)),
             color: Theme.of(context).primaryColor,
