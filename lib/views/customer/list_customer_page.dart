@@ -7,6 +7,7 @@ import 'package:laundry/util/nav_service.dart';
 import 'package:laundry/widget/error_page.dart';
 import 'package:laundry/widget/load_animation.dart';
 import 'package:laundry/widget/loading.dart';
+import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 
 class CustomerListPage extends StatefulWidget {
   @override
@@ -48,30 +49,33 @@ class _CustomerListPageState extends State<CustomerListPage> {
               stream: bloc.getCustomers,
               builder: (context, AsyncSnapshot<Customers> snapshot) {
                 if (snapshot.hasData) {
-                  return ListView.separated(
-                    itemCount: snapshot.data.data.length,
-                    separatorBuilder: (ctx, i) => Divider(),
-                    itemBuilder: (ctx, i) => Slidable(
-                      actionPane: SlidableDrawerActionPane(),
-                      actionExtentRatio: 0.25,
-                      child: ListTile(
-                        title: Text(snapshot.data.data[i].name??""),
-                        subtitle: Text(snapshot.data.data[i].phoneNumber??""),
+                  return LazyLoadScrollView(
+                    onEndOfPage: () => (snapshot.hasData && snapshot.data.nextPageUrl != null) ? bloc.loadMore(snapshot.data.nextPageUrl) : null,
+                    child: ListView.separated(
+                      itemCount: snapshot.data.data.length,
+                      separatorBuilder: (ctx, i) => Divider(),
+                      itemBuilder: (ctx, i) => Slidable(
+                        actionPane: SlidableDrawerActionPane(),
+                        actionExtentRatio: 0.25,
+                        child: ListTile(
+                          title: Text(snapshot.data.data[i].name??""),
+                          subtitle: Text(snapshot.data.data[i].phoneNumber??""),
+                        ),
+                        secondaryActions: <Widget>[
+                          IconSlideAction(
+                            caption: 'Edit',
+                            color: Colors.blue,
+                            icon: Icons.edit,
+                            onTap: () => navService.navigateTo("/form-customer", snapshot.data.data[i]??null),
+                          ),
+                          IconSlideAction(
+                            caption: 'Delete',
+                            color: Colors.red,
+                            icon: Icons.delete,
+                            onTap: () => bloc.deleteCustomer(_key, snapshot.data.data[i].id??0),
+                          ),
+                        ],
                       ),
-                      secondaryActions: <Widget>[
-                        IconSlideAction(
-                          caption: 'Edit',
-                          color: Colors.blue,
-                          icon: Icons.edit,
-                          onTap: () => navService.navigateTo("/form-customer", snapshot.data.data[i]??null),
-                        ),
-                        IconSlideAction(
-                          caption: 'Delete',
-                          color: Colors.red,
-                          icon: Icons.delete,
-                          onTap: () => bloc.deleteCustomer(_key, snapshot.data.data[i].id??0),
-                        ),
-                      ],
                     ),
                   );
                 } else if(snapshot.hasError) {

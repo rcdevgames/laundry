@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:bloc_pattern/bloc_pattern.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_alert/flutter_alert.dart';
@@ -49,6 +52,21 @@ class CustomerBloc extends BlocBase {
     try {
       final data = await repo.fetchCustomer();
       _customers.sink.add(data);
+    } catch (e) {
+      if (e.toString().contains("Unauthorized")) {
+        return navService.navigateReplaceTo("/login");
+      }
+      _customers.sink.addError(e.toString().replaceAll("Exception: ", ""));
+    }
+  }
+
+  loadMore(String url) async {
+    try {
+      final uri = Uri.parse(url);
+      final data = await repo.fetchCustomer(int.parse(uri.queryParameters['page']));
+      final customers = data.toJson();
+      customers['data'] = _customers.value.data + data.data;
+      _customers.sink.add(await compute(customersFromJson, jsonEncode(customers)));
     } catch (e) {
       if (e.toString().contains("Unauthorized")) {
         return navService.navigateReplaceTo("/login");
