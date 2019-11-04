@@ -1,85 +1,66 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_alert/flutter_alert.dart';
-import 'package:laundry/models/product_model.dart';
+import 'package:laundry/models/expenses_model.dart';
 import 'package:laundry/providers/repository.dart';
 import 'package:laundry/util/api.dart';
 import 'package:laundry/util/nav_service.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:rxdart/subjects.dart';
 
-class ProductBloc extends BlocBase {
-  final _products = BehaviorSubject<Products>();
-  final _product = BehaviorSubject<Product>();
-  final _loading = BehaviorSubject<bool>.seeded(false);
+class ExpenseBloc extends BlocBase {
   final _name = BehaviorSubject<String>();
-  final _price = BehaviorSubject<int>();
+  final _expense = BehaviorSubject<String>();
   final _time = BehaviorSubject<String>();
-  final _total_time = BehaviorSubject<int>();
-  final _id = BehaviorSubject<int>();
+  final _description = BehaviorSubject<String>();
+  final _loading = BehaviorSubject<bool>();
+  final _expenses = BehaviorSubject<Expenses>();
+  final _total = BehaviorSubject<int>.seeded(0);
 
   //Getter
-  Stream<Products> get getProducts => _products.stream;
-  Stream<Product> get getProduct => _product.stream;
+  Stream<Expenses> get getExpenses => _expenses.stream;
   Stream<bool> get isLoading => _loading.stream;
-  Stream<String> get getName => _name.stream;
-  Stream<String> get getTime => _time.stream;
-  Stream<int> get getPrice => _price.stream;
-  Stream<int> get getTotalTime => _total_time.stream;
+  Stream<int> get getTotal => _total.stream;
 
   //Setter
-  Function(Products) get setProducts => _products.sink.add;
-  Function(Product) get setProduct => _product.sink.add;
-  Function(bool) get setLoading => _loading.sink.add;
   Function(String) get setName => _name.sink.add;
+  Function(String) get setExpense => _expense.sink.add;
   Function(String) get setTime => _time.sink.add;
-  Function(int) get setPrice => _price.sink.add;
-  Function(int) get setTotalTime => _total_time.sink.add;
-  Function(int) get setID => _id.sink.add;
+  Function(String) get setDesc => _description.sink.add;
+  Function(Expenses) get setExpenses => _expenses.sink.add;
+  Function(bool) get setLoading => _loading.sink.add;
+  Function(int) get setTotal => _total.sink.add;
+
 
   @override
-  void dispose() { 
+  void dispose() {
     super.dispose();
     api.close();
-    _products.close();
-    _product.close();
-    _loading.close();
-    _name.close();
-    _price.close();
-    _time.close();
-    _total_time.close();
-    _id.close();
   }
 
   //Function
   reset() {
-    setProduct(null);
-    setLoading(false);
-    setName(null);
-    setTime(null);
-    setPrice(null);
-    setTotalTime(null);
-    setID(null);
-  }
 
+  }
   Future fetchData() async {
     try {
-      final data = await repo.fetchProduct();
-      _products.sink.add(data);
+      final data = await repo.fetchExpense();
+      data.data.forEach((i) => setTotal(_total.value + i.expenses));
+      print(_total.value);
+      _expenses.sink.add(data);
     } catch (e) {
       if (e.toString().contains("Unauthorized")) {
         return navService.navigateReplaceTo("/login");
       }
-      _products.sink.addError(e.toString().replaceAll("Exception: ", ""));
+      _expenses.sink.addError(e.toString().replaceAll("Exception: ", ""));
     }
   }
-
   addData(GlobalKey<FormState> key) async {
     if (key.currentState.validate()) {
       key.currentState.save();
       
       try {
         setLoading(true);
-        String data = await repo.addProduct(_name.value, _price.value, _time.value, _total_time.value);
+        String data = await repo.addExpense(_name.value, _expense.value, _time.value, _description.value);
         await fetchData();
         setLoading(false);
         showAlert(
@@ -107,14 +88,13 @@ class ProductBloc extends BlocBase {
       }
     }
   }
-  
   editData(GlobalKey<FormState> key, String id) async {
     if (key.currentState.validate()) {
       key.currentState.save();
 
       try {
         setLoading(true);
-        String data = await repo.editProduct(id, _name.value, _price.value, _time.value, _total_time.value);
+        String data = await repo.editExpense(id, _name.value, _expense.value, _time.value, _description.value);
         await fetchData();
         setLoading(false);
         showAlert(
@@ -142,12 +122,11 @@ class ProductBloc extends BlocBase {
       }
     }
   }
-
   deleteData(GlobalKey<ScaffoldState> key, String id) async {
     showAlert(
       context: key.currentContext,
-      title: "Hapus Produk",
-      body: "Apakah anda yakin ingin menghapus produk ini?",
+      title: "Hapus Pengeluaran",
+      body: "Apakah anda yakin ingin menghapus pengeluaran ini?",
       actions: [
         AlertAction(
           text: "Cancel",
@@ -158,7 +137,7 @@ class ProductBloc extends BlocBase {
           onPressed: () async {
             try {
               setLoading(true);
-              final data = await repo.deleteProduct(id);
+              final data = await repo.deleteExpense(id);
               await fetchData();
               setLoading(false);
 

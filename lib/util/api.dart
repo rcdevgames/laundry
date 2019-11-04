@@ -18,7 +18,7 @@ class Api {
   }
   
   Future<Response> oAuth({Map<String, dynamic> body}) async {
-    return client.post("http://laundry.sinudtech.web.id/api/user/login", body: jsonEncode(body));
+    return client.post("http://laundry.sinudtech.web.id/api/user/login", headers: requestHeaders, body: jsonEncode(body));
   }
   
   String getContent(String data) {

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:laundry/views/auth/login_page.dart';
+import 'package:laundry/views/customer/form_customer_page.dart';
+import 'package:laundry/views/customer/list_customer_page.dart';
+import 'package:laundry/views/expenses/form_expenses_page.dart';
+import 'package:laundry/views/expenses/list_expenses_page.dart';
 import 'package:laundry/views/main/layout_page.dart';
 import 'package:laundry/views/product/form_product_page.dart';
 import 'package:laundry/views/product/list_product_page.dart';
@@ -13,6 +17,14 @@ class Routes {
       case "/form-product": 
         var args = settings.arguments;
         return MaterialPageRoute(builder: (_) => FormProductPage(args));
+      case "/customers": return MaterialPageRoute(builder: (_) => CustomerListPage());
+      case "/form-customer": 
+        var args = settings.arguments;
+        return MaterialPageRoute(builder: (_) => CustomerFormPage(args));
+      case "/expenses": return MaterialPageRoute(builder: (_) => ExpensesListPage());
+      case "/form-expense": 
+        var args = settings.arguments;
+        return MaterialPageRoute(builder: (_) => ExpensesFormPage(args));
 
       default:
         return MaterialPageRoute(

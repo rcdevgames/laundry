@@ -60,8 +60,8 @@ class HomePage extends StatelessWidget {
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, childAspectRatio: 1.8),
             children: <Widget>[
               cardButton(title: "Produk", color: Colors.red, icon: FontAwesomeIcons.tshirt, onTap: () => navService.navigateTo("/products")),
-              cardButton(title: "Customer", color: Colors.deepPurple, icon: FontAwesomeIcons.userFriends, onTap: () => null),
-              cardButton(title: "Pengeluaran", color: Colors.lightGreen, icon: FontAwesomeIcons.moneyBillWave, onTap: () => null),
+              cardButton(title: "Customer", color: Colors.deepPurple, icon: FontAwesomeIcons.userFriends, onTap: () => navService.navigateTo("/customers")),
+              cardButton(title: "Pengeluaran", color: Colors.lightGreen, icon: FontAwesomeIcons.moneyBillWave, onTap: () => navService.navigateTo("/expenses")),
               cardButton(title: "Pengembalian", color: Colors.lightBlue, icon: FontAwesomeIcons.undo, onTap: () => null),
               cardButton(title: "Laporan", color: Colors.amber, icon: FontAwesomeIcons.chartLine, onTap: () => null),
             ],
