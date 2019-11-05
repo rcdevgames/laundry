@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:bloc_pattern/bloc_pattern.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_alert/flutter_alert.dart';
 import 'package:laundry/models/expenses_model.dart';
@@ -47,6 +50,20 @@ class ExpenseBloc extends BlocBase {
       data.data.forEach((i) => setTotal(_total.value + i.expenses));
       print(_total.value);
       _expenses.sink.add(data);
+    } catch (e) {
+      if (e.toString().contains("Unauthorized")) {
+        return navService.navigateReplaceTo("/login");
+      }
+      _expenses.sink.addError(e.toString().replaceAll("Exception: ", ""));
+    }
+  }
+  loadMore(String url) async {
+    try {
+      final uri = Uri.parse(url);
+      final data = await repo.fetchExpense(int.parse(uri.queryParameters['page']));
+      final expenses = data.toJson();
+      expenses['data'] = _expenses.value.data + data.data;
+      _expenses.sink.add(await compute(expensesFromJson, jsonEncode(expenses)));
     } catch (e) {
       if (e.toString().contains("Unauthorized")) {
         return navService.navigateReplaceTo("/login");

@@ -22,9 +22,13 @@ class _TransactionPageState extends State<TransactionPage> {
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(kToolbarHeight - 15),
           child: DefaultTabController(
-            length: 2,
+            length: 3,
             child: TabBar(
               tabs: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Text("Transaksi", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Text("Status", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),

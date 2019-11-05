@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:bloc_pattern/bloc_pattern.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_alert/flutter_alert.dart';
 import 'package:laundry/models/product_model.dart';
@@ -65,6 +68,21 @@ class ProductBloc extends BlocBase {
     try {
       final data = await repo.fetchProduct();
       _products.sink.add(data);
+    } catch (e) {
+      if (e.toString().contains("Unauthorized")) {
+        return navService.navigateReplaceTo("/login");
+      }
+      _products.sink.addError(e.toString().replaceAll("Exception: ", ""));
+    }
+  }
+
+  loadMore(String url) async {
+    try {
+      final uri = Uri.parse(url);
+      final data = await repo.fetchProduct(int.parse(uri.queryParameters['page']));
+      final products = data.toJson();
+      products['data'] = _products.value.data + data.data;
+      _products.sink.add(await compute(productsFromJson, jsonEncode(products)));
     } catch (e) {
       if (e.toString().contains("Unauthorized")) {
         return navService.navigateReplaceTo("/login");
