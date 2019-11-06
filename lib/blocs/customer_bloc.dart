@@ -14,6 +14,7 @@ import 'package:rxdart/rxdart.dart';
 class CustomerBloc extends BlocBase {
   final _customers = BehaviorSubject<Customers>();
   final _loading = BehaviorSubject<bool>.seeded(false);
+  final _search_able = BehaviorSubject<bool>.seeded(false);
   final _name = BehaviorSubject<String>();
   final _email = BehaviorSubject<String>();
   final _phone = BehaviorSubject<String>();
@@ -21,10 +22,12 @@ class CustomerBloc extends BlocBase {
   //Getter
   Stream<Customers> get getCustomers => _customers.stream;
   Stream<bool> get isLoading => _loading.stream;
+  Stream<bool> get isSearch => _search_able.stream;
 
   //Setter
   Function(Customers) get setCustomers => _customers.sink.add;
   Function(bool) get setLoading => _loading.sink.add;
+  Function(bool) get setSearch => _search_able.sink.add;
   Function(String) get setEmail => _email.sink.add;
   Function(String) get setName => _name.sink.add;
   Function(String) get setPhone => _phone.sink.add;
@@ -38,6 +41,7 @@ class CustomerBloc extends BlocBase {
     _name.close();
     _email.close();
     _phone.close();
+    _search_able.close();
   }
 
   //Function
@@ -46,15 +50,16 @@ class CustomerBloc extends BlocBase {
     setEmail(null);
     setName(null);
     setPhone(null);
+    setSearch(false);
   }
 
-  Future fetchData() async {
+  Future fetchData([String search]) async {
     try {
-      final data = await repo.fetchCustomer();
+      final data = await repo.fetchCustomer(1, search);
       _customers.sink.add(data);
     } catch (e) {
       if (e.toString().contains("Unauthorized")) {
-        return navService.navigateReplaceTo("/login");
+        return navService.navigateReplaceTo("/login", "unauthorized");
       }
       _customers.sink.addError(e.toString().replaceAll("Exception: ", ""));
     }
@@ -69,7 +74,7 @@ class CustomerBloc extends BlocBase {
       _customers.sink.add(await compute(customersFromJson, jsonEncode(customers)));
     } catch (e) {
       if (e.toString().contains("Unauthorized")) {
-        return navService.navigateReplaceTo("/login");
+        return navService.navigateReplaceTo("/login", "unauthorized");
       }
       _customers.sink.addError(e.toString().replaceAll("Exception: ", ""));
     }
@@ -100,7 +105,7 @@ class CustomerBloc extends BlocBase {
         setLoading(false);
         print(e.toString().replaceAll("Exception: ", ""));
         if (e.toString().contains("Unauthorized")) {
-          return navService.navigateReplaceTo("/login");
+          return navService.navigateReplaceTo("/login", "unauthorized");
         }
         showAlert(
           context: key.currentContext,
@@ -136,7 +141,7 @@ class CustomerBloc extends BlocBase {
         setLoading(false);
         print(e.toString().replaceAll("Exception: ", ""));
         if (e.toString().contains("Unauthorized")) {
-          return navService.navigateReplaceTo("/login");
+          return navService.navigateReplaceTo("/login", "unauthorized");
         }
         showAlert(
           context: key.currentContext,
@@ -175,7 +180,7 @@ class CustomerBloc extends BlocBase {
               setLoading(false);
               print(e.toString().replaceAll("Exception: ", ""));
               if (e.toString().contains("Unauthorized")) {
-                return navService.navigateReplaceTo("/login");
+                return navService.navigateReplaceTo("/login", "unauthorized");
               }
               showAlert(
                 context: key.currentContext,

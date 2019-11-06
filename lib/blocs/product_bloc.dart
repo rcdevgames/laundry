@@ -64,13 +64,13 @@ class ProductBloc extends BlocBase {
     setID(null);
   }
 
-  Future fetchData() async {
+  Future fetchData([String search]) async {
     try {
-      final data = await repo.fetchProduct();
+      final data = await repo.fetchProduct(1, search);
       _products.sink.add(data);
     } catch (e) {
       if (e.toString().contains("Unauthorized")) {
-        return navService.navigateReplaceTo("/login");
+        return navService.navigateReplaceTo("/login", "unauthorized");
       }
       _products.sink.addError(e.toString().replaceAll("Exception: ", ""));
     }
@@ -85,7 +85,7 @@ class ProductBloc extends BlocBase {
       _products.sink.add(await compute(productsFromJson, jsonEncode(products)));
     } catch (e) {
       if (e.toString().contains("Unauthorized")) {
-        return navService.navigateReplaceTo("/login");
+        return navService.navigateReplaceTo("/login", "unauthorized");
       }
       _products.sink.addError(e.toString().replaceAll("Exception: ", ""));
     }
@@ -115,7 +115,7 @@ class ProductBloc extends BlocBase {
         setLoading(false);
         print(e.toString().replaceAll("Exception: ", ""));
         if (e.toString().contains("Unauthorized")) {
-          return navService.navigateReplaceTo("/login");
+          return navService.navigateReplaceTo("/login", "unauthorized");
         }
         showAlert(
           context: key.currentContext,
@@ -150,7 +150,7 @@ class ProductBloc extends BlocBase {
         setLoading(false);
         print(e.toString().replaceAll("Exception: ", ""));
         if (e.toString().contains("Unauthorized")) {
-          return navService.navigateReplaceTo("/login");
+          return navService.navigateReplaceTo("/login", "unauthorized");
         }
         showAlert(
           context: key.currentContext,
@@ -189,7 +189,7 @@ class ProductBloc extends BlocBase {
               setLoading(false);
               print(e.toString().replaceAll("Exception: ", ""));
               if (e.toString().contains("Unauthorized")) {
-                return navService.navigateReplaceTo("/login");
+                return navService.navigateReplaceTo("/login", "unauthorized");
               }
               showAlert(
                 context: key.currentContext,

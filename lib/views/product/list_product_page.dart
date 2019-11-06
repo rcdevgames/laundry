@@ -8,6 +8,7 @@ import 'package:laundry/util/nav_service.dart';
 import 'package:laundry/widget/error_page.dart';
 import 'package:laundry/widget/load_animation.dart';
 import 'package:laundry/widget/loading.dart';
+import 'package:loader_search_bar/loader_search_bar.dart';
 
 class ProductListPage extends StatefulWidget {
   @override
@@ -37,10 +38,17 @@ class _ProductListPageState extends State<ProductListPage> {
       children: <Widget>[
         Scaffold(
           key: _key,
-          appBar: AppBar(
-            title: Text("Daftar Produk", style: TextStyle(color: Colors.white)),
-            brightness: Brightness.dark,
-            iconTheme: IconThemeData(color: Colors.white),
+          appBar: SearchBar(
+            defaultBar: AppBar(
+              title: Text("Daftar Produk", style: TextStyle(color: Colors.white)),
+              brightness: Brightness.dark,
+              iconTheme: IconThemeData(color: Colors.white),
+            ),
+            onQuerySubmitted: (query) {
+              bloc.setProducts(null);
+              bloc.fetchData(query);
+            },
+            searchHint: "Cari Kata Kunci..",
           ),
           body: RefreshIndicator(
             key: _refreshKey,

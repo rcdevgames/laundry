@@ -9,6 +9,7 @@ import 'package:laundry/widget/error_page.dart';
 import 'package:laundry/widget/load_animation.dart';
 import 'package:laundry/widget/loading.dart';
 import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
+import 'package:loader_search_bar/loader_search_bar.dart';
 
 class ExpensesListPage extends StatefulWidget {
   @override
@@ -38,10 +39,17 @@ class _ExpensesListPageState extends State<ExpensesListPage> {
       children: <Widget>[
         Scaffold(
           key: _key,
-          appBar: AppBar(
-            title: Text("Pengeluaran", style: TextStyle(color: Colors.white)),
-            brightness: Brightness.dark,
-            iconTheme: IconThemeData(color: Colors.white),
+          appBar: SearchBar(
+            defaultBar: AppBar(
+              title: Text("Pengeluaran", style: TextStyle(color: Colors.white)),
+              brightness: Brightness.dark,
+              iconTheme: IconThemeData(color: Colors.white),
+            ),
+            onQuerySubmitted: (query) {
+              bloc.setExpenses(null);
+              bloc.fetchData(query);
+            },
+            searchHint: "Cari Kata Kunci..",
           ),
           body: RefreshIndicator(
             key: _refreshKey,
@@ -121,26 +129,26 @@ class _ExpensesListPageState extends State<ExpensesListPage> {
               } return SizedBox();
             }
           ),
-          bottomNavigationBar: Container(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-            height: 35,
-            decoration: BoxDecoration(
-              border: Border(top: BorderSide(width: 1, color: Colors.lightBlue))
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text("Total Pengeluaran", style: TextStyle(fontWeight: FontWeight.w500)),
-                StreamBuilder(
-                  initialData: 0,
-                  stream: bloc.getTotal,
-                  builder: (context, AsyncSnapshot<int> snapshot) {
-                    return Text(rupiah(snapshot.data), style: TextStyle(fontWeight: FontWeight.w900));
-                  }
-                ),
-              ],
-            ),
-          ),
+          // bottomNavigationBar: Container(
+          //   padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+          //   height: 35,
+          //   decoration: BoxDecoration(
+          //     border: Border(top: BorderSide(width: 1, color: Colors.lightBlue))
+          //   ),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: <Widget>[
+          //       Text("Total Pengeluaran", style: TextStyle(fontWeight: FontWeight.w500)),
+          //       StreamBuilder(
+          //         initialData: 0,
+          //         stream: bloc.getTotal,
+          //         builder: (context, AsyncSnapshot<int> snapshot) {
+          //           return Text(rupiah(snapshot.data), style: TextStyle(fontWeight: FontWeight.w900));
+          //         }
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ),
         StreamBuilder(
           initialData: false,

@@ -44,15 +44,15 @@ class ExpenseBloc extends BlocBase {
   reset() {
 
   }
-  Future fetchData() async {
+  Future fetchData([String search]) async {
     try {
-      final data = await repo.fetchExpense();
-      data.data.forEach((i) => setTotal(_total.value + i.expenses));
-      print(_total.value);
+      final data = await repo.fetchExpense(1, search);
+      // data.data.forEach((i) => setTotal(_total.value + i.expenses));
+      // print(_total.value);
       _expenses.sink.add(data);
     } catch (e) {
       if (e.toString().contains("Unauthorized")) {
-        return navService.navigateReplaceTo("/login");
+        return navService.navigateReplaceTo("/login", "unauthorized");
       }
       _expenses.sink.addError(e.toString().replaceAll("Exception: ", ""));
     }
@@ -66,7 +66,7 @@ class ExpenseBloc extends BlocBase {
       _expenses.sink.add(await compute(expensesFromJson, jsonEncode(expenses)));
     } catch (e) {
       if (e.toString().contains("Unauthorized")) {
-        return navService.navigateReplaceTo("/login");
+        return navService.navigateReplaceTo("/login", "unauthorized");
       }
       _expenses.sink.addError(e.toString().replaceAll("Exception: ", ""));
     }
@@ -95,7 +95,7 @@ class ExpenseBloc extends BlocBase {
         setLoading(false);
         print(e.toString().replaceAll("Exception: ", ""));
         if (e.toString().contains("Unauthorized")) {
-          return navService.navigateReplaceTo("/login");
+          return navService.navigateReplaceTo("/login", "unauthorized");
         }
         showAlert(
           context: key.currentContext,
@@ -129,7 +129,7 @@ class ExpenseBloc extends BlocBase {
         setLoading(false);
         print(e.toString().replaceAll("Exception: ", ""));
         if (e.toString().contains("Unauthorized")) {
-          return navService.navigateReplaceTo("/login");
+          return navService.navigateReplaceTo("/login", "unauthorized");
         }
         showAlert(
           context: key.currentContext,
@@ -167,7 +167,7 @@ class ExpenseBloc extends BlocBase {
               setLoading(false);
               print(e.toString().replaceAll("Exception: ", ""));
               if (e.toString().contains("Unauthorized")) {
-                return navService.navigateReplaceTo("/login");
+                return navService.navigateReplaceTo("/login", "unauthorized");
               }
               showAlert(
                 context: key.currentContext,

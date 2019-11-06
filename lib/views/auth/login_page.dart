@@ -1,5 +1,6 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_alert/flutter_alert.dart';
 import 'package:laundry/blocs/login_bloc.dart';
 import 'package:laundry/util/validator.dart';
 import 'package:laundry/widget/loading.dart';
@@ -7,7 +8,8 @@ import 'package:laundry/widget/top_shape.dart';
 import 'package:responsive_screen/responsive_screen.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key key}) : super(key: key);
+  String data;
+  LoginPage([this.data]);
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -23,6 +25,14 @@ class _LoginPageState extends State<LoginPage> with ValidationMixin {
   Widget build(BuildContext context) {
     final Function wp = Screen(context).wp;
     final Function hp = Screen(context).hp;
+
+    if (widget.data != null && widget.data.contains("unauthorized")) {
+      showAlert(
+        context: context,
+        title: "Unauthorized",
+        body: "Sesi telah habis, silakan login kembali!",
+      );
+    }
 
     return Stack(
       children: <Widget>[

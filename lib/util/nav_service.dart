@@ -7,8 +7,8 @@ class NavigationService {
   Future<dynamic> navigateTo(String routeName, [Object arguments]) {
     return navigatorKey.currentState.pushNamed(routeName, arguments: arguments);
   }
-  Future<dynamic> navigateReplaceTo(String routeName) {
-    return navigatorKey.currentState.pushNamedAndRemoveUntil(routeName, (Route<dynamic> route) => false);
+  Future<dynamic> navigateReplaceTo(String routeName, [Object arguments]) {
+    return navigatorKey.currentState.pushNamedAndRemoveUntil(routeName, (Route<dynamic> route) => false, arguments: arguments);
   }
   navigatePop([bool toRoot = false]) {
     if (toRoot) {
