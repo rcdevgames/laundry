@@ -45,9 +45,9 @@ class _ExpensesListPageState extends State<ExpensesListPage> {
               brightness: Brightness.dark,
               iconTheme: IconThemeData(color: Colors.white),
             ),
-            onQuerySubmitted: (query) {
-              bloc.setExpenses(null);
+            onQueryChanged: (query) {
               bloc.fetchData(query);
+              bloc.setExpenses(null);
             },
             searchHint: "Cari Kata Kunci..",
           ),
@@ -60,22 +60,24 @@ class _ExpensesListPageState extends State<ExpensesListPage> {
                 if (snapshot.hasData) {
                   return LazyLoadScrollView(
                     onEndOfPage: () => (snapshot.hasData && snapshot.data.nextPageUrl != null) ? bloc.loadMore(snapshot.data.nextPageUrl) : null,
-                    child: ListView.separated(
+                    child: ListView.builder(
                       itemCount: snapshot.data.data.length,
-                      separatorBuilder: (ctx, i) => Divider(),
+                      // separatorBuilder: (ctx, i) => Divider(),
                       itemBuilder: (ctx, i) => Slidable(
                         actionPane: SlidableDrawerActionPane(),
                         actionExtentRatio: 0.25,
-                        child: ListTile(
-                          leading: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text("10", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-                              Text("Nov 2019", style: TextStyle(fontSize: 12)),
-                            ],
+                        child: Card(
+                          child: ListTile(
+                            leading: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text("10", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                                Text("Nov 2019", style: TextStyle(fontSize: 12)),
+                              ],
+                            ),
+                            title: Text("${snapshot.data.data[i]?.name} (${rupiah(snapshot.data.data[i]?.expenses)})"),
+                            subtitle: Text(snapshot.data.data[i].description??""),
                           ),
-                          title: Text("${snapshot.data.data[i]?.name} (${rupiah(snapshot.data.data[i]?.expenses)})"),
-                          subtitle: Text(snapshot.data.data[i].description??""),
                         ),
                         secondaryActions: <Widget>[
                           IconSlideAction(
@@ -106,14 +108,7 @@ class _ExpensesListPageState extends State<ExpensesListPage> {
                     ),
                   );
                 } else {
-                  return ListView.separated(
-                    itemCount: 3,
-                    separatorBuilder: (ctx, i) => Divider(),
-                    itemBuilder: (ctx, i) => ListTile(
-                      title: Skeleton(height: 10, width: 120),
-                      subtitle: Skeleton(height: 10, width: 200),
-                    ),
-                  );
+                  return LoadingBlock();
                 }
               }
             ),

@@ -7,6 +7,7 @@ import 'package:laundry/views/expenses/list_expenses_page.dart';
 import 'package:laundry/views/main/layout_page.dart';
 import 'package:laundry/views/product/form_product_page.dart';
 import 'package:laundry/views/product/list_product_page.dart';
+import 'package:laundry/views/transaction/product_list_page.dart';
 
 class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -25,6 +26,7 @@ class Routes {
       case "/form-expense": 
         var args = settings.arguments;
         return MaterialPageRoute(builder: (_) => ExpensesFormPage(args));
+      case "/list-product": return MaterialPageRoute(builder: (_) => ProductList());
 
       default:
         return MaterialPageRoute(

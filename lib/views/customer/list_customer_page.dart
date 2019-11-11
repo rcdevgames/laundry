@@ -44,7 +44,7 @@ class _CustomerListPageState extends State<CustomerListPage> {
               brightness: Brightness.dark,
               iconTheme: IconThemeData(color: Colors.white),
             ),
-            onQuerySubmitted: (query) {
+            onQueryChanged: (query) {
               bloc.setCustomers(null);
               bloc.fetchData(query);
             },
@@ -59,15 +59,16 @@ class _CustomerListPageState extends State<CustomerListPage> {
                 if (snapshot.hasData) {
                   return LazyLoadScrollView(
                     onEndOfPage: () => (snapshot.hasData && snapshot.data.nextPageUrl != null) ? bloc.loadMore(snapshot.data.nextPageUrl) : null,
-                    child: ListView.separated(
+                    child: ListView.builder(
                       itemCount: snapshot.data.data.length,
-                      separatorBuilder: (ctx, i) => Divider(),
                       itemBuilder: (ctx, i) => Slidable(
                         actionPane: SlidableDrawerActionPane(),
                         actionExtentRatio: 0.25,
-                        child: ListTile(
-                          title: Text(snapshot.data.data[i].name??""),
-                          subtitle: Text(snapshot.data.data[i].phoneNumber??""),
+                        child: Card(
+                          child: ListTile(
+                            title: Text(snapshot.data.data[i].name??""),
+                            subtitle: Text(snapshot.data.data[i].phoneNumber??""),
+                          ),
                         ),
                         secondaryActions: <Widget>[
                           IconSlideAction(
@@ -98,14 +99,7 @@ class _CustomerListPageState extends State<CustomerListPage> {
                     ),
                   );
                 } else {
-                  return ListView.separated(
-                    itemCount: 3,
-                    separatorBuilder: (ctx, i) => Divider(),
-                    itemBuilder: (ctx, i) => ListTile(
-                      title: Skeleton(height: 10, width: 120),
-                      subtitle: Skeleton(height: 10, width: 200),
-                    ),
-                  );
+                  return LoadingBlock();
                 }
               }
             ),

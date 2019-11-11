@@ -21,7 +21,7 @@ class ValidationMixin {
   }
 
   String validateRequired(String val) {
-    if (val.isEmpty) {
+    if (val == null || val.isEmpty) {
       return 'Required!';
     }
     return null;
@@ -40,7 +40,7 @@ class ValidationMixin {
     if(s == null) {
       return false;
     }
-    return double.parse(s, (e) => null) != null;
+    return double.tryParse(s) != null;
   }
 
 

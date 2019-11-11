@@ -44,7 +44,7 @@ class _ProductListPageState extends State<ProductListPage> {
               brightness: Brightness.dark,
               iconTheme: IconThemeData(color: Colors.white),
             ),
-            onQuerySubmitted: (query) {
+            onQueryChanged: (query) {
               bloc.setProducts(null);
               bloc.fetchData(query);
             },
@@ -57,23 +57,24 @@ class _ProductListPageState extends State<ProductListPage> {
               stream: bloc.getProducts,
               builder: (context, AsyncSnapshot<Products> snapshot) {
                 if (snapshot.hasData) {
-                  return ListView.separated(
+                  return ListView.builder(
                     itemCount: snapshot.data.data.length,
-                    separatorBuilder: (ctx, i) => Divider(),
                     itemBuilder: (ctx, i) => Slidable(
                       actionPane: SlidableDrawerActionPane(),
                       actionExtentRatio: 0.25,
-                      child: ListTile(
-                        leading: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text("Durasi", style: TextStyle(fontSize: 12)),
-                            Text(snapshot.data.data[i].totalTime.toString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                            Text(snapshot.data.data[i].time??"", style: TextStyle(fontSize: 12)),
-                          ],
+                      child: Card(
+                        child: ListTile(
+                          leading: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text("Durasi", style: TextStyle(fontSize: 12)),
+                              Text(snapshot.data.data[i].totalTime.toString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                              Text(snapshot.data.data[i].time??"", style: TextStyle(fontSize: 12)),
+                            ],
+                          ),
+                          title: Text(snapshot.data.data[i].name),
+                          subtitle: Text("Harga : ${rupiah(snapshot.data.data[i].price)}"),
                         ),
-                        title: Text(snapshot.data.data[i].name),
-                        subtitle: Text("Harga : ${rupiah(snapshot.data.data[i].price)}"),
                       ),
                       secondaryActions: <Widget>[
                         IconSlideAction(
@@ -103,14 +104,7 @@ class _ProductListPageState extends State<ProductListPage> {
                     ),
                   );
                 } else {
-                  return ListView.separated(
-                    itemCount: 3,
-                    separatorBuilder: (ctx, i) => Divider(),
-                    itemBuilder: (ctx, i) => ListTile(
-                      title: Skeleton(height: 10, width: 120),
-                      subtitle: Skeleton(height: 10, width: 200),
-                    ),
-                  );
+                  return LoadingBlock();
                 }
               }
             ),

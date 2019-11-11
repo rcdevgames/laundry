@@ -41,7 +41,7 @@ class Loading extends StatelessWidget {
 
 class LoadingBlock extends StatelessWidget {
   Color colors;
-  LoadingBlock(this.colors);
+  LoadingBlock([this.colors = Colors.lightBlue]);
 
   @override
   Widget build(BuildContext context) {

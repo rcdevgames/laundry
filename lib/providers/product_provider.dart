@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:laundry/models/auth_model.dart';
 import 'package:laundry/models/product_model.dart';
@@ -15,6 +17,23 @@ class ProductProvider {
 
     if (response.statusCode == 200) {
       return compute(productsFromJson, api.getContent(response.body));
+    }else if (response.statusCode == 401) {
+      throw Exception("Unauthorized");
+    }else{
+      throw Exception(response.body);
+    }
+  }
+
+  Future<List<Product>> fetchProductAll() async {
+    final user = await compute(authFromJson, await sessions.load("auth"));
+
+    final response = await api.post("product", body: {
+      "users_id": user.id,
+      "type": "all"
+    }, auth: true);
+
+    if (response.statusCode == 200) {
+      return List<Product>.from(jsonDecode(response.body)["data"].map((x) => Product.fromJson(x)));
     }else if (response.statusCode == 401) {
       throw Exception("Unauthorized");
     }else{
