@@ -3,6 +3,7 @@ import 'package:laundry/blocs/customer_bloc.dart';
 import 'package:laundry/blocs/expense_bloc.dart';
 import 'package:laundry/blocs/login_bloc.dart';
 import 'package:laundry/blocs/product_bloc.dart';
+import 'package:laundry/blocs/report_bloc.dart';
 import 'package:laundry/blocs/transaction_bloc.dart';
 
 final List<Bloc<BlocBase>> blocs = [
@@ -11,4 +12,5 @@ final List<Bloc<BlocBase>> blocs = [
   Bloc((i) => new CustomerBloc()),
   Bloc((i) => new ExpenseBloc()),
   Bloc((i) => new TransactionBloc()),
+  Bloc((i) => new ReportBloc()),
 ];

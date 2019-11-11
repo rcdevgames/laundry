@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:laundry/models/auth_model.dart';
+import 'package:laundry/util/session.dart';
 import 'package:laundry/views/main/home_page.dart';
 import 'package:laundry/views/main/profile_page.dart';
 import 'package:laundry/views/main/setting_page.dart';
@@ -13,12 +16,21 @@ class LayoutPage extends StatefulWidget {
 class LayoutPageState extends State<LayoutPage> {
   final _key = new GlobalKey<ScaffoldState>();
   int page;
+  Auth user;
 
   @override
   void initState() { 
     super.initState();
+    initSessions();
     page = 0;
     setState(() {});
+  }
+
+  initSessions() async {
+    var data = await sessions.load("auth");
+    if (data != null) {
+      user = await compute(authFromJson, data);
+    }
   }
 
   @override
@@ -28,9 +40,8 @@ class LayoutPageState extends State<LayoutPage> {
       body: Builder(
         builder: (ctx) {
           switch (page) {
-            case 0: return new HomePage();
+            case 0: return new HomePage(user);
             case 1: return new TransactionPage();
-            // case 2: return new SettingPage();
             case 2: return new ProfilePage();
             default: return Container();
           }
@@ -49,10 +60,6 @@ class LayoutPageState extends State<LayoutPage> {
             icon: Icon(FontAwesomeIcons.listAlt),
             title: Text("Transaksi")
           ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(FontAwesomeIcons.cog),
-          //   title: Text("Pengaturan")
-          // ),
           BottomNavigationBarItem(
             icon: Icon(FontAwesomeIcons.userAlt),
             title: Text("Akun")

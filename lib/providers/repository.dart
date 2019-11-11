@@ -2,11 +2,13 @@ import 'package:laundry/models/auth_model.dart';
 import 'package:laundry/models/customer_model.dart';
 import 'package:laundry/models/expenses_model.dart';
 import 'package:laundry/models/product_model.dart';
+import 'package:laundry/models/report_model.dart';
 import 'package:laundry/models/transaction_model.dart';
 import 'package:laundry/providers/auth_provider.dart';
 import 'package:laundry/providers/customer_provider.dart';
 import 'package:laundry/providers/expenses_provider.dart';
 import 'package:laundry/providers/product_provider.dart';
+import 'package:laundry/providers/report_provider.dart';
 import 'package:laundry/providers/transaction_provider.dart';
 
 class Repository {
@@ -37,6 +39,8 @@ class Repository {
   Future<Transactions> fetchTransaction([int page = 1, String type = "proses"]) => transactionProvider.fetchTransaction(page, type);
   Future<String> createTransaction(String product_id, int qty, [String name, String phone, String email, String id]) => transactionProvider.createTransaction(product_id, qty, name, phone, email, id);
 
+  final reportProvider = new ReportProvider();
+  Future<Report> getReport([String month = ""]) => reportProvider.getReport(month);
 }
 
 final repo = new Repository();

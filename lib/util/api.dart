@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'package:http/http.dart' show Client, Response;
-// import 'package:http/http.dart';
-import 'package:http_client_helper/http_client_helper.dart';
 import 'package:laundry/util/session.dart';
 
 class Api {

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:laundry/models/auth_model.dart';
 import 'package:laundry/util/nav_service.dart';
 import 'package:responsive_screen/responsive_screen.dart';
 
 class HomePage extends StatelessWidget {
+  Auth user;
+  HomePage(this.user);
+  
   @override
   Widget build(BuildContext context) {
     final Function wp = Screen(context).wp;
@@ -63,7 +67,7 @@ class HomePage extends StatelessWidget {
               cardButton(title: "Customer", color: Colors.deepPurple, icon: FontAwesomeIcons.userFriends, onTap: () => navService.navigateTo("/customers")),
               cardButton(title: "Pengeluaran", color: Colors.lightGreen, icon: FontAwesomeIcons.moneyBillWave, onTap: () => navService.navigateTo("/expenses")),
               cardButton(title: "Pengembalian", color: Colors.lightBlue, icon: FontAwesomeIcons.undo, onTap: () => null),
-              cardButton(title: "Laporan", color: Colors.amber, icon: FontAwesomeIcons.chartLine, onTap: () => null),
+              cardButton(title: "Laporan", color: Colors.amber, icon: FontAwesomeIcons.chartLine, onTap: () => navService.navigateTo("/report")),
             ],
           ),
         )
