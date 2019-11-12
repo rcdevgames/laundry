@@ -25,6 +25,7 @@ class _TransactionPageState extends State<TransactionPage> with SingleTickerProv
   final _refreshKey1 = new GlobalKey<RefreshIndicatorState>();
   final bloc = BlocProvider.getBloc<TransactionBloc>();
   final _product = new TextEditingController();
+  final _customer = new TextEditingController();
   TabController _tabController;
 
   @override
@@ -198,7 +199,7 @@ class _TransactionPageState extends State<TransactionPage> with SingleTickerProv
                                 child: Stack(
                                   children: <Widget>[
                                     TextFormField(
-                                      controller: _product,
+                                      controller: _customer,
                                       enabled: false,
                                       decoration: InputDecoration(
                                         labelText: "Nama Customer",
@@ -211,10 +212,10 @@ class _TransactionPageState extends State<TransactionPage> with SingleTickerProv
                                       child: IconButton(
                                         icon: Icon(Icons.search, color: Colors.grey),
                                         onPressed: () async {
-                                          Product data = await navService.navigateTo("/list-customer");
+                                          Customer data = await navService.navigateTo("/list-customer");
                                           if (data != null) {
-                                            _product.text = data.name;
-                                            bloc.setProductID(data.id);
+                                            _customer.text = data.name;
+                                            bloc.setCustomer(data.id);
                                           }
                                         }
                                       ),
