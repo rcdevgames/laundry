@@ -193,28 +193,57 @@ class _TransactionPageState extends State<TransactionPage> with SingleTickerProv
                                 ],
                               );
                             } else if (snapshot.data == 1) {
-                              return StreamBuilder(
-                                stream: bloc.getCustomer,
-                                builder: (context, AsyncSnapshot<List<Customer>> snapshot) {
-                                  return StreamBuilder(
-                                    stream: bloc.getCustomerID,
-                                    builder: (context, AsyncSnapshot<String> data) {
-                                      return DropdownButtonFormField<String>(
-                                        validator: validateRequired,
-                                        onChanged: bloc.setCustomer,
-                                        value: data.data,
-                                        items: snapshot.hasData ? snapshot.data.map((i) => DropdownMenuItem(
-                                          value: i.id,
-                                          child: Text(i.name),
-                                        )).toList():[],
-                                        decoration: InputDecoration(
-                                          labelText: "Pilih Customer"
-                                        ),
-                                      );
-                                    }
-                                  );
-                                }
+                              return Padding(
+                                padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
+                                child: Stack(
+                                  children: <Widget>[
+                                    TextFormField(
+                                      controller: _product,
+                                      enabled: false,
+                                      decoration: InputDecoration(
+                                        labelText: "Nama Customer",
+                                        contentPadding: EdgeInsets.fromLTRB(10.0, 16.0, 20.0, 16.0),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 20,
+                                      right: 0,
+                                      child: IconButton(
+                                        icon: Icon(Icons.search, color: Colors.grey),
+                                        onPressed: () async {
+                                          Product data = await navService.navigateTo("/list-customer");
+                                          if (data != null) {
+                                            _product.text = data.name;
+                                            bloc.setProductID(data.id);
+                                          }
+                                        }
+                                      ),
+                                    )
+                                  ],
+                                ),
                               );
+                              // return StreamBuilder(
+                              //   stream: bloc.getCustomer,
+                              //   builder: (context, AsyncSnapshot<List<Customer>> snapshot) {
+                              //     return StreamBuilder(
+                              //       stream: bloc.getCustomerID,
+                              //       builder: (context, AsyncSnapshot<String> data) {
+                              //         return DropdownButtonFormField<String>(
+                              //           validator: validateRequired,
+                              //           onChanged: bloc.setCustomer,
+                              //           value: data.data,
+                              //           items: snapshot.hasData ? snapshot.data.map((i) => DropdownMenuItem(
+                              //             value: i.id,
+                              //             child: Text(i.name),
+                              //           )).toList():[],
+                              //           decoration: InputDecoration(
+                              //             labelText: "Pilih Customer"
+                              //           ),
+                              //         );
+                              //       }
+                              //     );
+                              //   }
+                              // );
                             } return SizedBox();
                           }
                         ),

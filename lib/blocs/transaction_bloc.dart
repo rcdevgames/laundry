@@ -17,6 +17,8 @@ class TransactionBloc extends BlocBase {
   final _trx_complete = new BehaviorSubject<Transactions>();
   final _customer_list = new BehaviorSubject<List<Customer>>();
   final _product_list = new BehaviorSubject<List<Product>>();
+  final _customer_list_backup = new BehaviorSubject<List<Customer>>();
+  final _product_list_backup = new BehaviorSubject<List<Product>>();
   final _loading = new BehaviorSubject<bool>.seeded(false);
   final _users_id = new BehaviorSubject<String>();
   final _name = new BehaviorSubject<String>();
@@ -26,7 +28,6 @@ class TransactionBloc extends BlocBase {
   final _qty = new BehaviorSubject<int>();
 
   TransactionBloc() {
-    fetchCustomer();
     fetchProcessTrasaction();
     fetchCompleteTransaction();
   }
@@ -58,6 +59,7 @@ class TransactionBloc extends BlocBase {
     try {
       final data = await repo.fetchProductAll();
       _product_list.sink.add(data);
+      _product_list_backup.sink.add(data);
     } catch (e) {
       if (e.toString().contains("Unauthorized")) {
         return navService.navigateReplaceTo("/login", "unauthorized");
@@ -69,6 +71,7 @@ class TransactionBloc extends BlocBase {
     try {
       final data = await repo.fetchCustomerAll();
       _customer_list.sink.add(data);
+      _customer_list_backup.sink.add(data);
     } catch (e) {
       if (e.toString().contains("Unauthorized")) {
         return navService.navigateReplaceTo("/login", "unauthorized");
@@ -138,6 +141,32 @@ class TransactionBloc extends BlocBase {
           body: e.toString().replaceAll("Exception: ", "")
         );
       }
+    }
+  }
+  filterCustomer(String query) {
+    List<Customer> filter = [];
+    if (query.isEmpty) {
+      _customer_list.sink.add(_customer_list_backup.value);
+    }else{
+      _customer_list_backup.value.forEach((i) {
+        if (i.name.toLowerCase().contains(query) || i.phoneNumber.contains(query)) {
+          filter.add(i);
+        }
+      });
+      _customer_list.sink.add(filter);
+    }
+  }
+  filterProduct(String query) {
+    List<Product> filter = [];
+    if (query.isNotEmpty) {
+      _product_list_backup.value.forEach((i) {
+        if (i.name.toLowerCase().contains(query)) {
+          filter.add(i);
+        }
+      });
+      _product_list.sink.add(filter);
+    }else{
+      _product_list.sink.add(_product_list_backup.value);
     }
   }
 }
