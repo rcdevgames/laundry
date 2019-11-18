@@ -43,10 +43,28 @@ class TransactionProvider {
       };
     }
 
+    print(body);
     final response = await api.post("transaction/store", body: body, auth: true);
 
     if (response.statusCode == 200) {
       return "Transaksi Berhasil di Tambahkan.";
+    }else if (response.statusCode == 401) {
+      throw Exception("Unauthorized");
+    }else{
+      throw Exception(response.body);
+    }
+  }
+
+  Future<String> updateTransaction(String id, String status) async {
+    final user = await compute(authFromJson, await sessions.load("auth"));
+    final response = await api.post("transaction/update", body: {
+      "users_id": user.id,
+      "status": status,
+      "id": id
+    }, auth: true);
+    
+    if (response.statusCode == 200) {
+      return "Transaksi Berhasil di Ubah.";
     }else if (response.statusCode == 401) {
       throw Exception("Unauthorized");
     }else{

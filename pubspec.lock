@@ -21,7 +21,14 @@ packages:
       name: blue_thermal_printer
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.8"
+    version: "1.0.9"
+  bn_refresh_indicator:
+    dependency: "direct main"
+    description:
+      name: bn_refresh_indicator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.4.5"
   boolean_selector:
     dependency: transitive
     description:

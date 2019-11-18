@@ -71,8 +71,10 @@ class _ExpensesListPageState extends State<ExpensesListPage> {
                             leading: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                Text("10", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-                                Text("Nov 2019", style: TextStyle(fontSize: 12)),
+                                Text(snapshot.data.data[i].time.day.toString(), style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                                Text(tanggal(snapshot.data.data[i].time).split(" ")[1] +" "+tanggal(snapshot.data.data[i].time).split(" ")[2], style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800))
+                                // Text("10", style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                                // Text("Nov 2019", style: TextStyle(fontSize: 12)),
                               ],
                             ),
                             title: Text("${snapshot.data.data[i]?.name} (${rupiah(snapshot.data.data[i]?.expenses)})"),
@@ -84,7 +86,7 @@ class _ExpensesListPageState extends State<ExpensesListPage> {
                             caption: 'Edit',
                             color: Colors.blue,
                             icon: Icons.edit,
-                            onTap: () => navService.navigateTo("/form-customer", snapshot.data.data[i]??null),
+                            onTap: () => navService.navigateTo("/form-expense", snapshot.data.data[i]??null),
                           ),
                           IconSlideAction(
                             caption: 'Delete',

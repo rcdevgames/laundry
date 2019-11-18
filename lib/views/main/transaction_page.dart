@@ -1,4 +1,5 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
+import 'package:bn_refresh_indicator/bn_refresh_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:indonesia/indonesia.dart';
 import 'package:laundry/blocs/transaction_bloc.dart';
@@ -21,8 +22,8 @@ class TransactionPage extends StatefulWidget {
 class _TransactionPageState extends State<TransactionPage> with SingleTickerProviderStateMixin, ValidationMixin {
   final _key = new GlobalKey<ScaffoldState>();
   final _form = new GlobalKey<FormState>();
-  final _refreshKey = new GlobalKey<RefreshIndicatorState>();
-  final _refreshKey1 = new GlobalKey<RefreshIndicatorState>();
+  final _refreshKey = new BnRefreshController();
+  final _refreshKey1 = new BnRefreshController();
   final bloc = BlocProvider.getBloc<TransactionBloc>();
   final _product = new TextEditingController();
   final _customer = new TextEditingController();
@@ -77,213 +78,193 @@ class _TransactionPageState extends State<TransactionPage> with SingleTickerProv
         physics: NeverScrollableScrollPhysics(),
         controller: _tabController,
         children: <Widget>[
-          Stack(
-            children: <Widget>[
-              Form(
-                key: _form,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
-                        child: Stack(
-                          children: <Widget>[
-                            TextFormField(
-                              controller: _product,
-                              enabled: false,
-                              decoration: InputDecoration(
-                                labelText: "Nama Produk",
-                                contentPadding: EdgeInsets.fromLTRB(10.0, 16.0, 20.0, 16.0),
+          Tab(
+            child: Stack(
+              children: <Widget>[
+                Form(
+                  key: _form,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
+                          child: Stack(
+                            children: <Widget>[
+                              TextFormField(
+                                controller: _product,
+                                enabled: false,
+                                decoration: InputDecoration(
+                                  labelText: "Nama Produk",
+                                  contentPadding: EdgeInsets.fromLTRB(10.0, 16.0, 20.0, 16.0),
+                                ),
                               ),
-                            ),
-                            Positioned(
-                              top: 20,
-                              right: 0,
-                              child: IconButton(
-                                icon: Icon(Icons.search, color: Colors.grey),
-                                onPressed: () async {
-                                  Product data = await navService.navigateTo("/list-product");
-                                  if (data != null) {
-                                    _product.text = data.name;
-                                    bloc.setProductID(data.id);
+                              Positioned(
+                                top: 20,
+                                right: 0,
+                                child: IconButton(
+                                  icon: Icon(Icons.search, color: Colors.grey),
+                                  onPressed: () async {
+                                    Product data = await navService.navigateTo("/list-product");
+                                    if (data != null) {
+                                      _product.text = data.name;
+                                      bloc.setProductID(data.id);
+                                    }
                                   }
-                                }
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
-                        child: TextFormField(
-                          validator: validateRequiredNumber,
-                          onSaved: bloc.setName,
-                          decoration: InputDecoration(
-                            labelText: "Jumlah (Kg)",
-                            contentPadding: EdgeInsets.fromLTRB(10.0, 16.0, 20.0, 16.0),
+                                ),
+                              )
+                            ],
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 10, 26, 6),
-                        child: StreamBuilder(
-                          stream: bloc.getPage,
-                          builder: (context, AsyncSnapshot<int> snapshot) {
-                            return Row(
-                              children: <Widget>[
-                                Radio(
-                                  value: 0,
-                                  groupValue: snapshot.data,
-                                  onChanged: bloc.setPage,
-                                ),
-                                Text(
-                                  'Customer Baru',
-                                  style: TextStyle(fontSize: 16.0),
-                                ),
-                                Expanded(child: SizedBox()),
-                                Radio(
-                                  value: 1,
-                                  groupValue: snapshot.data,
-                                  onChanged: bloc.setPage,
-                                ),
-                                Text(
-                                  'Customer Lama',
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                  ),
-                                )
-                              ],
-                            );
-                          }
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
+                          child: TextFormField(
+                            validator: validateRequiredNumber,
+                            onSaved: (i) => bloc.setQTY(int.parse(i)),
+                            decoration: InputDecoration(
+                              labelText: "Jumlah (Kg)",
+                              contentPadding: EdgeInsets.fromLTRB(10.0, 16.0, 20.0, 16.0),
+                            ),
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
-                        child: StreamBuilder(
-                          stream: bloc.getPage,
-                          builder: (context, AsyncSnapshot<int> snapshot) {
-                            if (snapshot.data == 0) {
-                              return Column(
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 10, 26, 6),
+                          child: StreamBuilder(
+                            stream: bloc.getPage,
+                            builder: (context, AsyncSnapshot<int> snapshot) {
+                              return Row(
                                 children: <Widget>[
-                                  TextFormField(
-                                    validator: validateRequired,
-                                    onSaved: bloc.setName,
-                                    decoration: InputDecoration(
-                                      labelText: "Name",
-                                      contentPadding: EdgeInsets.fromLTRB(10.0, 16.0, 20.0, 16.0),
-                                    ),
+                                  Radio(
+                                    value: 0,
+                                    groupValue: snapshot.data,
+                                    onChanged: bloc.setPage,
                                   ),
-                                  TextFormField(
-                                    validator: validateRequired,
-                                    onSaved: bloc.setEmail,
-                                    keyboardType: TextInputType.emailAddress,
-                                    decoration: InputDecoration(
-                                      labelText: "Email",
-                                      contentPadding: EdgeInsets.fromLTRB(10.0, 16.0, 20.0, 16.0),
-                                    ),
+                                  Text(
+                                    'Customer Baru',
+                                    style: TextStyle(fontSize: 16.0),
                                   ),
-                                  TextFormField(
-                                    validator: validateRequired,
-                                    onSaved: bloc.setPhone,
-                                    keyboardType: TextInputType.phone,
-                                    decoration: InputDecoration(
-                                      labelText: "Nomor HP",
-                                      contentPadding: EdgeInsets.fromLTRB(10.0, 16.0, 20.0, 16.0),
+                                  Expanded(child: SizedBox()),
+                                  Radio(
+                                    value: 1,
+                                    groupValue: snapshot.data,
+                                    onChanged: bloc.setPage,
+                                  ),
+                                  Text(
+                                    'Customer Lama',
+                                    style: TextStyle(
+                                      fontSize: 16.0,
                                     ),
                                   )
                                 ],
                               );
-                            } else if (snapshot.data == 1) {
-                              return Padding(
-                                padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
-                                child: Stack(
+                            }
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
+                          child: StreamBuilder(
+                            stream: bloc.getPage,
+                            builder: (context, AsyncSnapshot<int> snapshot) {
+                              if (snapshot.data == 0) {
+                                return Column(
                                   children: <Widget>[
                                     TextFormField(
-                                      controller: _customer,
-                                      enabled: false,
+                                      validator: validateRequired,
+                                      onSaved: bloc.setName,
                                       decoration: InputDecoration(
-                                        labelText: "Nama Customer",
+                                        labelText: "Name",
                                         contentPadding: EdgeInsets.fromLTRB(10.0, 16.0, 20.0, 16.0),
                                       ),
                                     ),
-                                    Positioned(
-                                      top: 20,
-                                      right: 0,
-                                      child: IconButton(
-                                        icon: Icon(Icons.search, color: Colors.grey),
-                                        onPressed: () async {
-                                          Customer data = await navService.navigateTo("/list-customer");
-                                          if (data != null) {
-                                            _customer.text = data.name;
-                                            bloc.setCustomer(data.id);
-                                          }
-                                        }
+                                    TextFormField(
+                                      validator: validateRequired,
+                                      onSaved: bloc.setEmail,
+                                      keyboardType: TextInputType.emailAddress,
+                                      decoration: InputDecoration(
+                                        labelText: "Email",
+                                        contentPadding: EdgeInsets.fromLTRB(10.0, 16.0, 20.0, 16.0),
+                                      ),
+                                    ),
+                                    TextFormField(
+                                      validator: validateRequired,
+                                      onSaved: bloc.setPhone,
+                                      keyboardType: TextInputType.phone,
+                                      decoration: InputDecoration(
+                                        labelText: "Nomor HP",
+                                        contentPadding: EdgeInsets.fromLTRB(10.0, 16.0, 20.0, 16.0),
                                       ),
                                     )
                                   ],
-                                ),
-                              );
-                              // return StreamBuilder(
-                              //   stream: bloc.getCustomer,
-                              //   builder: (context, AsyncSnapshot<List<Customer>> snapshot) {
-                              //     return StreamBuilder(
-                              //       stream: bloc.getCustomerID,
-                              //       builder: (context, AsyncSnapshot<String> data) {
-                              //         return DropdownButtonFormField<String>(
-                              //           validator: validateRequired,
-                              //           onChanged: bloc.setCustomer,
-                              //           value: data.data,
-                              //           items: snapshot.hasData ? snapshot.data.map((i) => DropdownMenuItem(
-                              //             value: i.id,
-                              //             child: Text(i.name),
-                              //           )).toList():[],
-                              //           decoration: InputDecoration(
-                              //             labelText: "Pilih Customer"
-                              //           ),
-                              //         );
-                              //       }
-                              //     );
-                              //   }
-                              // );
-                            } return SizedBox();
-                          }
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
-                        child: RaisedButton(
-                          color: Colors.lightBlue,
-                          colorBrightness: Brightness.dark,
-                          onPressed: () => bloc.doTransaction(_form),
-                          child: SizedBox(
-                            width: wp(100),
-                            height: 40,
-                            child: Center(child: Text("Simpan", style: TextStyle(fontSize: 16)))
+                                );
+                              } else if (snapshot.data == 1) {
+                                return Padding(
+                                  padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
+                                  child: Stack(
+                                    children: <Widget>[
+                                      TextFormField(
+                                        controller: _customer,
+                                        enabled: false,
+                                        decoration: InputDecoration(
+                                          labelText: "Nama Customer",
+                                          contentPadding: EdgeInsets.fromLTRB(10.0, 16.0, 20.0, 16.0),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 20,
+                                        right: 0,
+                                        child: IconButton(
+                                          icon: Icon(Icons.search, color: Colors.grey),
+                                          onPressed: () async {
+                                            Customer data = await navService.navigateTo("/list-customer");
+                                            if (data != null) {
+                                              _customer.text = data.name;
+                                              bloc.setCustomer(data.id);
+                                            }
+                                          }
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              } return SizedBox();
+                            }
                           ),
                         ),
-                      )
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 5, 16, 5),
+                          child: RaisedButton(
+                            color: Colors.lightBlue,
+                            colorBrightness: Brightness.dark,
+                            onPressed: () => bloc.doTransaction(_form, _tabController),
+                            child: SizedBox(
+                              width: wp(100),
+                              height: 40,
+                              child: Center(child: Text("Simpan", style: TextStyle(fontSize: 16)))
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              StreamBuilder(
-                initialData: false,
-                stream: bloc.isLoading,
-                builder: (context, AsyncSnapshot<bool> snapshot) {
-                  return Loading(snapshot.data);
-                }
-              )
-            ],
+                StreamBuilder(
+                  initialData: false,
+                  stream: bloc.isLoading,
+                  builder: (context, AsyncSnapshot<bool> snapshot) {
+                    return Loading(snapshot.data);
+                  }
+                )
+              ],
+            ),
           ),
-          StreamBuilder(
-            stream: bloc.getProcessTRX,
-            builder: (context, AsyncSnapshot<Transactions> snapshot) {
-              if (snapshot.hasData) {
-                return RefreshIndicator(
-                  key: _refreshKey,
-                  onRefresh: bloc.fetchProcessTrasaction,
-                  child: LazyLoadScrollView(
-                    onEndOfPage: () => (snapshot.hasData && snapshot.data.nextPageUrl != null) ? bloc.fetchProcessTrasaction(snapshot.data.nextPageUrl) : null,
+          Tab(
+            child: StreamBuilder(
+              stream: bloc.getProcessTRX,
+              builder: (context, AsyncSnapshot<Transactions> snapshot) {
+                if (snapshot.hasData) {
+                  return BnRefreshIndicator(
+                    refreshController: _refreshKey,
+                    onRefresh: bloc.fetchProcessTrasaction,
+                    onLoadMore: () => (snapshot.hasData && snapshot.data.nextPageUrl != null) ? bloc.fetchProcessTrasaction(snapshot.data.nextPageUrl) : null,
                     child: ListView.builder(
                       itemCount: snapshot.data.data.length,
                       // separatorBuilder: (ctx, i) => Divider(),
@@ -307,39 +288,29 @@ class _TransactionPageState extends State<TransactionPage> with SingleTickerProv
                               Text("On Process", style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800))
                             ],
                           ),
-                          onTap: () => null,
                         ),
                       ),
                     ),
-                  ),
-                );
-              } if (snapshot.hasError) {
-                return ErrorPage(
-                  onPressed: () => null,
-                  buttonText: "Ulangi",
-                  message: snapshot.error,
-                );
-              } return ListView.builder(
-                itemCount: 3,
-                // separatorBuilder: (ctx, i) => Divider(),
-                itemBuilder: (ctx, i) => Card(
-                  child: ListTile(
-                    title: Skeleton(height: 10, width: 120),
-                    subtitle: Skeleton(height: 10, width: 200),
-                  ),
-                ),
-              );
-            }
+                  );
+                } if (snapshot.hasError) {
+                  return ErrorPage(
+                    onPressed: () => null,
+                    buttonText: "Ulangi",
+                    message: snapshot.error,
+                  );
+                } return LoadingBlock();
+              }
+            ),
           ),
-          StreamBuilder(
-            stream: bloc.getCompleteTRX,
-            builder: (context, AsyncSnapshot<Transactions> snapshot) {
-              if (snapshot.hasData) {
-                return RefreshIndicator(
-                  key: _refreshKey1,
-                  onRefresh: bloc.fetchCompleteTransaction,
-                  child: LazyLoadScrollView(
-                    onEndOfPage: () => (snapshot.hasData && snapshot.data.nextPageUrl != null) ? bloc.fetchProcessTrasaction(snapshot.data.nextPageUrl) : null,
+          Tab(
+            child: StreamBuilder(
+              stream: bloc.getCompleteTRX,
+              builder: (context, AsyncSnapshot<Transactions> snapshot) {
+                if (snapshot.hasData) {
+                  return BnRefreshIndicator(
+                    refreshController: _refreshKey1,
+                    onRefresh: bloc.fetchCompleteTransaction,
+                    onLoadMore: () => (snapshot.hasData && snapshot.data.nextPageUrl != null) ? bloc.fetchCompleteTransaction(snapshot.data.nextPageUrl) : null,
                     child: ListView.builder(
                       itemCount: snapshot.data.data.length,
                       // separatorBuilder: (ctx, i) => Divider(),
@@ -367,25 +338,16 @@ class _TransactionPageState extends State<TransactionPage> with SingleTickerProv
                         ),
                       ),
                     ),
-                  ),
-                );
-              } if (snapshot.hasError) {
-                return ErrorPage(
-                  onPressed: () => null,
-                  buttonText: "Ulangi",
-                  message: snapshot.error,
-                );
-              } return ListView.builder(
-                itemCount: 3,
-                // separatorBuilder: (ctx, i) => Divider(),
-                itemBuilder: (ctx, i) => Card(
-                  child: ListTile(
-                    title: Skeleton(height: 10, width: 120),
-                    subtitle: Skeleton(height: 10, width: 200),
-                  ),
-                ),
-              );
-            }
+                  );
+                } if (snapshot.hasError) {
+                  return ErrorPage(
+                    onPressed: () => null,
+                    buttonText: "Ulangi",
+                    message: snapshot.error,
+                  );
+                } return LoadingBlock();
+              }
+            ),
           )
         ],
       ),

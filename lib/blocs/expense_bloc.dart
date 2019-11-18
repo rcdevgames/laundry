@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:bloc_pattern/bloc_pattern.dart';
+import 'package:date_format/date_format.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_alert/flutter_alert.dart';
@@ -18,11 +19,13 @@ class ExpenseBloc extends BlocBase {
   final _loading = BehaviorSubject<bool>();
   final _expenses = BehaviorSubject<Expenses>();
   final _total = BehaviorSubject<int>.seeded(0);
+  final _dateTime = BehaviorSubject<DateTime>();
 
   //Getter
   Stream<Expenses> get getExpenses => _expenses.stream;
   Stream<bool> get isLoading => _loading.stream;
   Stream<int> get getTotal => _total.stream;
+  Stream<DateTime> get getDateTime => _dateTime.stream;
 
   //Setter
   Function(String) get setName => _name.sink.add;
@@ -32,17 +35,30 @@ class ExpenseBloc extends BlocBase {
   Function(Expenses) get setExpenses => _expenses.sink.add;
   Function(bool) get setLoading => _loading.sink.add;
   Function(int) get setTotal => _total.sink.add;
-
+  Function(DateTime) get setDateTime => _dateTime.sink.add;
 
   @override
   void dispose() {
     super.dispose();
     api.close();
+    _name.close();
+    _expense.close();
+    _time.close();
+    _description.close();
+    _loading.close();
+    _expenses.close();
+    _total.close();
+    _dateTime.close();
   }
 
   //Function
   reset() {
-
+    setName(null);
+    setTime(null);
+    setDesc(null);
+    setLoading(false);
+    setTotal(null);
+    setDateTime(null);
   }
   Future fetchData([String search]) async {
     try {
@@ -111,7 +127,7 @@ class ExpenseBloc extends BlocBase {
 
       try {
         setLoading(true);
-        String data = await repo.editExpense(id, _name.value, _expense.value, _time.value, _description.value);
+        String data = await repo.editExpense(id, _name.value, _expense.value, formatDate(_dateTime.value, [yyyy,'-',mm,'-',dd]), _description.value);
         await fetchData();
         setLoading(false);
         showAlert(
@@ -180,5 +196,19 @@ class ExpenseBloc extends BlocBase {
       ]
     );
   }
+  setDate(BuildContext context) async {
+    final now = new DateTime.now();
+    final DateTime picked = await showDatePicker(
+      context: context,
+      initialDate: now,
+      firstDate: new DateTime(1900),
+      lastDate: now,
+      initialDatePickerMode: DatePickerMode.year
+    );
 
+    if (picked != null && picked != _dateTime.value) {
+      setDateTime(picked);
+      setTime(formatDate(picked, [dd,' ',MM,' ',yyyy]));
+    }
+  }
 }

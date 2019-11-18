@@ -14,6 +14,7 @@ import 'package:laundry/providers/transaction_provider.dart';
 class Repository {
   final authProvider = new AuthProvider();
   Future<Auth> actionLogin(String email, String password) => authProvider.actionLogin(email, password);
+  Future<String> changePassword(String old_password, String new_password, String conf_password) => authProvider.changePassword(old_password, new_password, conf_password);
 
   final productProvider = new ProductProvider();
   Future<Products> fetchProduct([int page = 1, String search = ""]) => productProvider.fetchProduct(page, search);
@@ -38,6 +39,7 @@ class Repository {
   final transactionProvider = new TransactionProvider();
   Future<Transactions> fetchTransaction([int page = 1, String type = "proses"]) => transactionProvider.fetchTransaction(page, type);
   Future<String> createTransaction(String product_id, int qty, [String name, String phone, String email, String id]) => transactionProvider.createTransaction(product_id, qty, name, phone, email, id);
+  Future<String> updateTransaction(String id, String status) => transactionProvider.updateTransaction(id, status);
 
   final reportProvider = new ReportProvider();
   Future<Report> getReport([String month = ""]) => reportProvider.getReport(month);

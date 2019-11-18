@@ -2,6 +2,7 @@ import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_alert/flutter_alert.dart';
 import 'package:laundry/blocs/login_bloc.dart';
+import 'package:laundry/util/session.dart';
 import 'package:laundry/util/validator.dart';
 import 'package:laundry/widget/loading.dart';
 import 'package:laundry/widget/top_shape.dart';
@@ -20,19 +21,32 @@ class _LoginPageState extends State<LoginPage> with ValidationMixin {
   final _form = new GlobalKey<FormState>();
   final bloc = BlocProvider.getBloc<LoginBloc>();
 
+  @override
+  void initState() { 
+    super.initState();
+    init();
+  }
+
+  init() async {
+    if (widget.data != null) {
+      sessions.clear();
+      await Future.delayed(const Duration(milliseconds: 500));
+      // _key?.currentState.showSnackBar(SnackBar(
+      //   content: Text("Sesi telah habis, silakan login kembali!"),
+      // ));
+      showAlert(
+        context: context,
+        title: "Session Expired",
+        body: "Sesi telah habis, silakan login kembali!"
+      );
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
     final Function wp = Screen(context).wp;
     final Function hp = Screen(context).hp;
-
-    if (widget.data != null && widget.data.contains("unauthorized")) {
-      showAlert(
-        context: context,
-        title: "Unauthorized",
-        body: "Sesi telah habis, silakan login kembali!",
-      );
-    }
 
     return Stack(
       children: <Widget>[

@@ -8,13 +8,16 @@ import 'package:laundry/views/main/layout_page.dart';
 import 'package:laundry/views/product/form_product_page.dart';
 import 'package:laundry/views/product/list_product_page.dart';
 import 'package:laundry/views/report/report_page.dart';
+import 'package:laundry/views/return/return_list_page.dart';
 import 'package:laundry/views/transaction/customer_list_page.dart';
 import 'package:laundry/views/transaction/product_list_page.dart';
 
 class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case "/login": return MaterialPageRoute(builder: (_) => LoginPage());
+      case "/login": 
+        var args = settings.arguments;
+        return MaterialPageRoute(builder: (_) => LoginPage(args));
       case "/main": return MaterialPageRoute(builder: (_) => LayoutPage());
       case "/products": return MaterialPageRoute(builder: (_) => ProductListPage());
       case "/form-product": 
@@ -31,6 +34,7 @@ class Routes {
       case "/list-product": return MaterialPageRoute(builder: (_) => ProductList());
       case "/list-customer": return MaterialPageRoute(builder: (_) => CustomerList());
       case "/report": return MaterialPageRoute(builder: (_) => ReportPage());
+      case "/return": return MaterialPageRoute(builder: (_) => RetrurnListPage());
 
       default:
         return MaterialPageRoute(

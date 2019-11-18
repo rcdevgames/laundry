@@ -1,7 +1,7 @@
 name: laundry
 description: A new Flutter project.
 
-version: 1.0.10+14
+version: 1.0.11+15
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -12,7 +12,7 @@ dependencies:
   bloc_pattern: ^2.4.1+1
   shared_preferences: 0.5.3+5
   font_awesome_flutter: ^8.5.0
-  blue_thermal_printer: ^1.0.8
+  blue_thermal_printer: ^1.0.9
   responsive_screen: ^1.0.0
   flutter_spinkit: ^4.0.0
   cryptoutils: ^0.4.0
@@ -26,6 +26,7 @@ dependencies:
   lazy_load_scrollview: ^1.0.1
   date_format: ^1.0.8
   loader_search_bar: ^1.0.3+3
+  bn_refresh_indicator: ^1.4.5
 
 dev_dependencies:
   flutter_test:

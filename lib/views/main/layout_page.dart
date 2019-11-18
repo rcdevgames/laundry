@@ -31,6 +31,7 @@ class LayoutPageState extends State<LayoutPage> {
     if (data != null) {
       user = await compute(authFromJson, data);
     }
+    setState(() {});
   }
 
   @override

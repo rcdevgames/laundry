@@ -53,6 +53,25 @@ class TransactionBloc extends BlocBase {
   Function(String) get setProductID => _product_id.sink.add;
   Function(int) get setQTY => _qty.sink.add;
 
+  @override
+  void dispose() { 
+    super.dispose();
+    _paging.close();
+    _trx_process.close();
+    _trx_complete.close();
+    _customer_list.close();
+    _product_list.close();
+    _customer_list_backup.close();
+    _product_list_backup.close();
+    _loading.close();
+    _users_id.close();
+    _name.close();
+    _phone.close();
+    _email.close();
+    _product_id.close();
+    _qty.close();
+  }
+
 
   //Function
   Future fetchProducts() async {
@@ -118,17 +137,25 @@ class TransactionBloc extends BlocBase {
       _trx_complete.sink.addError(e.toString().replaceAll("Exception: ", ""));
     }
   }
-  doTransaction(GlobalKey<FormState> key) async {
+  doTransaction(GlobalKey<FormState> key, TabController ctrl) async {
     if (key.currentState.validate()) {
       key.currentState.save();
       setLoading(true);
       try {
         var result = await repo.createTransaction(_product_id.value, _qty.value, _name.value, _phone.value, _email.value, _users_id.value);
+        await fetchProcessTrasaction();
+
         setLoading(false);
         showAlert(
           context: key.currentContext,
           title: "Transaksi Berhasil",
-          body: result
+          body: result,
+          actions: [
+            AlertAction(
+              text: "Confirm",
+              onPressed: () => ctrl.animateTo(1)
+            )
+          ]
         );
       } catch (e) {
         setLoading(false);

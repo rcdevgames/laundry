@@ -67,7 +67,7 @@ class ReportPage extends StatelessWidget {
                             Text("Bulan"),
                             SizedBox(height: 3),
                             SizedBox(
-                              width: wp(45),
+                              width: wp(50),
                               child: StreamBuilder(
                                 stream: bloc.getMonth,
                                 builder: (context, AsyncSnapshot<String> snapshot) {
@@ -90,7 +90,7 @@ class ReportPage extends StatelessWidget {
                             ),
                             SizedBox(height: 8),
                             SizedBox(
-                              width: wp(45),
+                              width: wp(50),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: <Widget>[
