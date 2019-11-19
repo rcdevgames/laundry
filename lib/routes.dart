@@ -5,12 +5,15 @@ import 'package:laundry/views/customer/list_customer_page.dart';
 import 'package:laundry/views/expenses/form_expenses_page.dart';
 import 'package:laundry/views/expenses/list_expenses_page.dart';
 import 'package:laundry/views/main/layout_page.dart';
+import 'package:laundry/views/printer/printer_setup_page.dart';
 import 'package:laundry/views/product/form_product_page.dart';
 import 'package:laundry/views/product/list_product_page.dart';
 import 'package:laundry/views/report/report_page.dart';
+import 'package:laundry/views/report/report_print_page.dart';
 import 'package:laundry/views/return/return_list_page.dart';
 import 'package:laundry/views/transaction/customer_list_page.dart';
 import 'package:laundry/views/transaction/product_list_page.dart';
+import 'package:laundry/views/transaction/transaction_print_page.dart';
 
 class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -35,6 +38,9 @@ class Routes {
       case "/list-customer": return MaterialPageRoute(builder: (_) => CustomerList());
       case "/report": return MaterialPageRoute(builder: (_) => ReportPage());
       case "/return": return MaterialPageRoute(builder: (_) => RetrurnListPage());
+      case "/setting-printer": return MaterialPageRoute(builder: (_) => SettingPrinterPage());
+      case "/transaction-print": return MaterialPageRoute(builder: (_) => TransactionPrintPage());
+      case "/report-print": return MaterialPageRoute(builder: (_) => ReportPrintPage());
 
       default:
         return MaterialPageRoute(

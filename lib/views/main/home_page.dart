@@ -70,6 +70,7 @@ class HomePage extends StatelessWidget {
               cardButton(title: "Pengeluaran", color: Colors.lightGreen, icon: FontAwesomeIcons.moneyBillWave, onTap: () => navService.navigateTo("/expenses")),
               cardButton(title: "Pengembalian", color: Colors.lightBlue, icon: FontAwesomeIcons.undo, onTap: () => navService.navigateTo("/return")),
               cardButton(title: "Laporan", color: Colors.amber, icon: FontAwesomeIcons.chartLine, onTap: () => navService.navigateTo("/report")),
+              cardButton(title: "Printer", color: Colors.blue, icon: FontAwesomeIcons.print, onTap: () => navService.navigateTo("/setting-printer")),
             ],
           ),
         )
