@@ -3,6 +3,7 @@ import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_alert/flutter_alert.dart';
 import 'package:indonesia/indonesia.dart';
+import 'package:laundry/models/report_model.dart';
 import 'package:laundry/util/session.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter/services.dart';
@@ -15,6 +16,7 @@ class PrintBloc extends BlocBase {
   final _loading = BehaviorSubject<bool>.seeded(false);
   final _bt_able = BehaviorSubject<bool>.seeded(false);
   final _bt_connected = BehaviorSubject<bool>.seeded(false);
+  final _loading_connect = BehaviorSubject<List<bool>>();
 
   //Getter
   Stream<List<BluetoothDevice>> get getDevices => _devices.stream;
@@ -22,9 +24,9 @@ class PrintBloc extends BlocBase {
   Stream<bool> get isLoading => _loading.stream;
   Stream<bool> get getBTAble => _bt_able.stream;
   Stream<bool> get getBTConnect => _bt_connected.stream;
+  Stream<List<bool>> get getLoading => _loading_connect.stream;
 
   //Setter
-
   Function(List<BluetoothDevice>) get setDevices => _devices.sink.add;
   Function(BluetoothDevice) get setDevice => _device.sink.add;
   Function(bool) get setLoading => _loading.sink.add;
@@ -50,6 +52,7 @@ class PrintBloc extends BlocBase {
       try {
         var bind = await sessions.load("printer");
         var devices = await bluetooth.getBondedDevices();
+        _loading_connect.sink.add(List.generate(devices.length, (i) => false));
         setDevices(devices);
         print(bind);
         if (bind != null) {
@@ -69,12 +72,23 @@ class PrintBloc extends BlocBase {
     }
   }
 
-  connect(BuildContext context, BluetoothDevice device) async {
+  setLoadingConnect(int index, bool val) {
+    var loading = _loading_connect.value;
+    loading[index] = val;
+    _loading_connect.sink.add(loading);
+  }
+
+  connect(BuildContext context, BluetoothDevice device, int index) async {
     try {
+      setLoadingConnect(index, true);
       await bluetooth.connect(device);
       setDevice(device);
       sessions.save("printer", device.address);
+      setLoadingConnect(index, false);
     } catch (e) {
+      setLoadingConnect(index, false);
+      sessions.remove("printer");
+      bluetooth.disconnect();
       showAlert(
         context: context,
         title: "Error Connecting Bluetooth",
@@ -83,15 +97,18 @@ class PrintBloc extends BlocBase {
     }
   }
   
-  disconnect(BuildContext context) async {
+  disconnect(BuildContext context, int index) async {
     try {
+      setLoadingConnect(index, true);
       await bluetooth.disconnect();
       setDevice(null);
       sessions.remove("printer");
+      setLoadingConnect(index, false);
     } catch (e) {
+      setLoadingConnect(index, false);
       showAlert(
         context: context,
-        title: "Error Connecting Bluetooth",
+        title: "Error Disconnecting Bluetooth",
         body: e.toString()
       );
     }
@@ -150,7 +167,7 @@ class PrintBloc extends BlocBase {
     });
   }
 
-  printReport() async {
+  printReport(BuildContext context, Report report, String period) async {
     //SIZE
     // 0- normal size text
     // 1- only bold text
@@ -163,7 +180,34 @@ class PrintBloc extends BlocBase {
 
     bluetooth.isConnected.then((isConnected) {
       if (isConnected) {
-
+        bluetooth.printCustom("Laundry Print Test",1,1);
+        bluetooth.printCustom("Indonesia",1,1);
+        bluetooth.printCustom("--------------------------------",1,1);
+        bluetooth.printCustom("Periode : $period",0,1);
+        bluetooth.printCustom("--------------------------------",1,1);
+        bluetooth.printLeftRight("Transaksi Process", rupiah(report.transactionProses),0);
+        bluetooth.printLeftRight("Transaksi Selesai", rupiah(report.transactionDone),0);
+        bluetooth.printLeftRight("Pengeluaran", rupiah(report.expenses),0);
+        bluetooth.printCustom("--------------------------------",1,1);
+        bluetooth.printNewLine();
+        if (report.profit < 0) {
+          bluetooth.printLeftRight("Rugi", rupiah(report.profit),0);
+        }else{
+          bluetooth.printLeftRight("Laba", rupiah(report.profit),0);
+        }
+        bluetooth.printNewLine();
+        bluetooth.printNewLine();
+        bluetooth.printNewLine();
+        bluetooth.printLeftRight("", DateTime.now().toIso8601String(),0);
+        bluetooth.printNewLine();
+        bluetooth.printNewLine();
+        bluetooth.paperCut();
+      } else {
+        showAlert(
+          context: context,
+          title: "Error Print",
+          body: "Printer Tidak Terhubung!"
+        );
       }
     });
   }

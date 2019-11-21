@@ -29,7 +29,8 @@ class ReportBloc extends BlocBase {
     super.dispose();
     _report_data.close();
     _loading.close();
-    _month.close();
+    // _month.close();
+    print("Report Dispose");
   }
 
   //Function

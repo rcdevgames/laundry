@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:indonesia/indonesia.dart';
 import 'package:laundry/blocs/report_bloc.dart';
 import 'package:laundry/models/report_model.dart';
+import 'package:laundry/util/nav_service.dart';
 import 'package:laundry/widget/loading.dart';
 import 'package:responsive_screen/responsive_screen.dart';
 
@@ -50,6 +51,17 @@ class ReportPage extends StatelessWidget {
             title: Text("Laporan", style: TextStyle(color: Colors.white)),
             brightness: Brightness.dark,
             iconTheme: IconThemeData(color: Colors.white),
+            actions: <Widget>[
+              StreamBuilder<Report>(
+                stream: bloc.getReport,
+                builder: (context, snapshot) {
+                  return IconButton(
+                    icon: Icon(Icons.print),
+                    onPressed: !snapshot.hasData ? null : () => navService.navigateTo("/report-print", snapshot.data),
+                  );
+                }
+              )
+            ],
           ),
           body: StreamBuilder(
             stream: bloc.getReport,

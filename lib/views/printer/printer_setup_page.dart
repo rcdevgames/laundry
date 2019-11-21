@@ -58,34 +58,39 @@ class _SettingPrinterPageState extends State<SettingPrinterPage> {
               child: ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    leading: Icon(Icons.bluetooth),
-                    title: Text(snapshot.data[index].name),
-                    subtitle: Text(snapshot.data[index].address),
-                    trailing: StreamBuilder<BluetoothDevice>(
-                      stream: bloc.getDevice,
-                      builder: (context, val) {
-                        if (val.hasData) {
-                          if (val.data.address == snapshot.data[index].address) {
-                            return RaisedButton(
-                              colorBrightness: Brightness.dark,
-                              color: Colors.lightBlue,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                              onPressed: () => bloc.disconnect(context),
-                              child: Text("Disconnected"),
-                            );  
-                          } return SizedBox();
-                        } else{
-                          return RaisedButton(
-                            colorBrightness: Brightness.dark,
-                            color: Colors.lightBlue,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                            onPressed: () => bloc.connect(context, snapshot.data[index]),
-                            child: Text("Connect"),
-                          );
-                        }
-                      }
-                    ),
+                  return StreamBuilder<List<bool>>(
+                    stream: bloc.getLoading,
+                    builder: (context, loading) {
+                      return ListTile(
+                        leading: Icon(Icons.bluetooth),
+                        title: Text(snapshot.data[index].name),
+                        subtitle: Text(snapshot.data[index].address),
+                        trailing: StreamBuilder<BluetoothDevice>(
+                          stream: bloc.getDevice,
+                          builder: (context, val) {
+                            if (val.hasData) {
+                              if (val.data.address == snapshot.data[index].address) {
+                                return RaisedButton(
+                                  colorBrightness: Brightness.dark,
+                                  color: Colors.lightBlue,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                  onPressed: loading.hasData && loading.data[index] ? null : () => bloc.disconnect(context, index),
+                                  child: Text(loading.hasData && loading.data[index] ? "Disconnecting" : "Disconnected"),
+                                );  
+                              } return SizedBox();
+                            } else{
+                              return RaisedButton(
+                                colorBrightness: Brightness.dark,
+                                color: Colors.lightBlue,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                onPressed: loading.hasData && loading.data[index] ? null : () => bloc.connect(context, snapshot.data[index], index),
+                                child: Text(loading.hasData && loading.data[index] ? "Connecting" : "Connect"),
+                              );
+                            }
+                          }
+                        ),
+                      );
+                    }
                   );
                 },
               ),
