@@ -1,9 +1,12 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_alert/flutter_alert.dart';
 import 'package:indonesia/indonesia.dart';
+import 'package:laundry/models/auth_model.dart';
 import 'package:laundry/models/report_model.dart';
+import 'package:laundry/util/nav_service.dart';
 import 'package:laundry/util/session.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter/services.dart';
@@ -17,6 +20,7 @@ class PrintBloc extends BlocBase {
   final _bt_able = BehaviorSubject<bool>.seeded(false);
   final _bt_connected = BehaviorSubject<bool>.seeded(false);
   final _loading_connect = BehaviorSubject<List<bool>>();
+  final _users = BehaviorSubject<Auth>();
 
   //Getter
   Stream<List<BluetoothDevice>> get getDevices => _devices.stream;
@@ -25,6 +29,7 @@ class PrintBloc extends BlocBase {
   Stream<bool> get getBTAble => _bt_able.stream;
   Stream<bool> get getBTConnect => _bt_connected.stream;
   Stream<List<bool>> get getLoading => _loading_connect.stream;
+  Stream<Auth> get getUser => _users.stream;
 
   //Setter
   Function(List<BluetoothDevice>) get setDevices => _devices.sink.add;
@@ -39,6 +44,8 @@ class PrintBloc extends BlocBase {
     _loading.close();
     _bt_able.close();
     _bt_connected.close();
+    _loading_connect.close();
+    _users.close();
   }
 
   //Function
@@ -72,6 +79,13 @@ class PrintBloc extends BlocBase {
     }
   }
 
+  Future loadUser() async {
+    var data = await sessions.load("auth");
+    if (data != null) {
+      _users.sink.add(await compute(authFromJson, data));
+    }
+  }
+
   setLoadingConnect(int index, bool val) {
     var loading = _loading_connect.value;
     loading[index] = val;
@@ -85,14 +99,14 @@ class PrintBloc extends BlocBase {
       setDevice(device);
       sessions.save("printer", device.address);
       setLoadingConnect(index, false);
-    } catch (e) {
+    } on PlatformException catch (e) {
       setLoadingConnect(index, false);
       sessions.remove("printer");
       bluetooth.disconnect();
       showAlert(
         context: context,
         title: "Error Connecting Bluetooth",
-        body: e.toString()
+        body: e.message
       );
     }
   }
@@ -104,12 +118,12 @@ class PrintBloc extends BlocBase {
       setDevice(null);
       sessions.remove("printer");
       setLoadingConnect(index, false);
-    } catch (e) {
+    } on PlatformException catch (e) {
       setLoadingConnect(index, false);
       showAlert(
         context: context,
         title: "Error Disconnecting Bluetooth",
-        body: e.toString()
+        body: e.message
       );
     }
   }
@@ -177,10 +191,10 @@ class PrintBloc extends BlocBase {
     // 0- ESC_ALIGN_LEFT
     // 1- ESC_ALIGN_CENTER
     // 2- ESC_ALIGN_RIGHT
-
+    await loadUser();
     bluetooth.isConnected.then((isConnected) {
       if (isConnected) {
-        bluetooth.printCustom("Laundry Print Test",1,1);
+        bluetooth.printCustom("${_users.value.name[0].toUpperCase()}${_users.value.name.substring(1)} Laundry",1,1);
         bluetooth.printCustom("Indonesia",1,1);
         bluetooth.printCustom("--------------------------------",1,1);
         bluetooth.printCustom("Periode : $period",0,1);
@@ -206,7 +220,17 @@ class PrintBloc extends BlocBase {
         showAlert(
           context: context,
           title: "Error Print",
-          body: "Printer Tidak Terhubung!"
+          body: "Printer Tidak Terhubung!",
+          actions: [
+            AlertAction(
+              onPressed: () => null,
+              text: "Batalkan"
+            ),
+            AlertAction(
+              onPressed: () => navService.navigateTo("/setting-printer"),
+              text: "Pengaturan"
+            ),
+          ]
         );
       }
     });

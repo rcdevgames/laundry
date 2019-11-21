@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:indonesia/indonesia.dart';
 import 'package:laundry/blocs/print_bloc.dart';
 import 'package:laundry/blocs/report_bloc.dart';
+import 'package:laundry/models/auth_model.dart';
 import 'package:laundry/models/report_model.dart';
 import 'package:responsive_screen/responsive_screen.dart';
 
@@ -32,6 +33,7 @@ class ReportPrintPage extends StatelessWidget {
     final Function hp = Screen(context).hp;
     final bloc = BlocProvider.getBloc<ReportBloc>();
     final printBloc = BlocProvider.getBloc<PrintBloc>();
+    printBloc.loadUser();
 
     Widget _buildDashWidget() {
       return Row(
@@ -47,7 +49,7 @@ class ReportPrintPage extends StatelessWidget {
         ),
       );
     }
-    
+
     return Scaffold(
       key: _key,
       appBar: AppBar(
@@ -63,7 +65,14 @@ class ReportPrintPage extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 SizedBox(height: 30),
-                Text("Laundry Print Report", style: TextStyle(fontSize: 20)),
+                StreamBuilder<Auth>(
+                  stream: printBloc.getUser,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Text("${snapshot.data.name[0].toUpperCase()}${snapshot.data.name.substring(1)} Laundry", style: TextStyle(fontSize: 20));
+                    } return Text("");
+                  }
+                ),
                 SizedBox(height: 5),
                 Text("Indonesia", style: TextStyle(fontSize: 20)),
                 SizedBox(height: 10),
@@ -124,7 +133,7 @@ class ReportPrintPage extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text("Laba"),
+                            Text("Rugi"),
                             Text(rupiah(data.profit)),
                           ],
                         ),
@@ -135,7 +144,7 @@ class ReportPrintPage extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text("Rugi"),
+                            Text("Laba"),
                             Text(rupiah(data.profit)),
                           ],
                         ),
