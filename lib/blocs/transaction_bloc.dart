@@ -139,30 +139,30 @@ class TransactionBloc extends BlocBase {
     }
   }
   doTransaction(GlobalKey<FormState> key, TabController ctrl) async {
-    var result = await compute(newTransactionFromJson, '{"id":"a59e260f-384f-4d68-bd64-41ff83965d03","transaction_id":"b3e4e574-c280-4fb5-8ee3-1c68b574eda8","qty":"99","price":6000,"total":594000,"deleted_at":null,"created_at":"2019-11-29 01:27:15","updated_at":"2019-11-29 01:27:15","users_id":"a45090e0-e561-4fd7-928c-bfdfecb8adcf","product_name":"Cuci Setrika","product_time":"hari","product_total_time":3,"percen_laba":10}');
-    navService.navigateTo("/transaction-print", result);
+    // var result = await compute(newTransactionFromJson, '{"id":"a59e260f-384f-4d68-bd64-41ff83965d03","transaction_id":"b3e4e574-c280-4fb5-8ee3-1c68b574eda8","qty":"99","price":6000,"total":594000,"deleted_at":null,"created_at":"2019-11-29 01:27:15","updated_at":"2019-11-29 01:27:15","users_id":"a45090e0-e561-4fd7-928c-bfdfecb8adcf","product_name":"Cuci Setrika","product_time":"hari","product_total_time":3,"percen_laba":10}');
+    // navService.navigateTo("/transaction-print", result);
 
 
-    // if (key.currentState.validate()) {
-    //   key.currentState.save();
-    //   setLoading(true);
-    //   try {
-    //     var result = await repo.createTransaction(_product_id.value, _qty.value, _name.value, _phone.value, _email.value, _users_id.value);
-    //     await fetchProcessTrasaction();
-    //     setLoading(false);
-    //     navService.navigateTo("/transaction-print", result);
-    //   } catch (e) {
-    //     setLoading(false);
-    //     if (e.toString().contains("Unauthorized")) {
-    //       return navService.navigateReplaceTo("/login", "unauthorized");
-    //     }
-    //     showAlert(
-    //       context: key.currentContext,
-    //       title: "Transaksi Gagal",
-    //       body: e.toString().replaceAll("Exception: ", "")
-    //     );
-    //   }
-    // }
+    if (key.currentState.validate()) {
+      key.currentState.save();
+      setLoading(true);
+      try {
+        var result = await repo.createTransaction(_product_id.value, _qty.value, _name.value, _phone.value, _email.value, _users_id.value);
+        await fetchProcessTrasaction();
+        setLoading(false);
+        navService.navigateTo("/transaction-print", result);
+      } catch (e) {
+        setLoading(false);
+        if (e.toString().contains("Unauthorized")) {
+          return navService.navigateReplaceTo("/login", "unauthorized");
+        }
+        showAlert(
+          context: key.currentContext,
+          title: "Transaksi Gagal",
+          body: e.toString().replaceAll("Exception: ", "")
+        );
+      }
+    }
   }
   filterCustomer(String query) {
     List<Customer> filter = [];
