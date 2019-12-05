@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:laundry/models/auth_model.dart';
+import 'package:laundry/models/new_transaction_model.dart';
 import 'package:laundry/models/transaction_model.dart';
 import 'package:laundry/util/api.dart';
 import 'package:laundry/util/session.dart';
@@ -22,7 +23,7 @@ class TransactionProvider {
     }
   }
 
-  Future<String> createTransaction(String product_id, int qty, String name, String phone, String email, String id) async {
+  Future<NewTransaction> createTransaction(String product_id, int qty, String name, String phone, String email, String id) async {
     final user = await compute(authFromJson, await sessions.load("auth"));
     Map<String, dynamic> body;
     if (id != null) {
@@ -43,11 +44,10 @@ class TransactionProvider {
       };
     }
 
-    print(body);
     final response = await api.post("transaction/store", body: body, auth: true);
 
     if (response.statusCode == 200) {
-      return "Transaksi Berhasil di Tambahkan.";
+      return compute(newTransactionFromJson, api.getContent(response.body));
     }else if (response.statusCode == 401) {
       throw Exception("Unauthorized");
     }else{

@@ -1,6 +1,7 @@
 import 'package:laundry/models/auth_model.dart';
 import 'package:laundry/models/customer_model.dart';
 import 'package:laundry/models/expenses_model.dart';
+import 'package:laundry/models/new_transaction_model.dart';
 import 'package:laundry/models/product_model.dart';
 import 'package:laundry/models/report_model.dart';
 import 'package:laundry/models/transaction_model.dart';
@@ -38,7 +39,7 @@ class Repository {
 
   final transactionProvider = new TransactionProvider();
   Future<Transactions> fetchTransaction([int page = 1, String type = "proses"]) => transactionProvider.fetchTransaction(page, type);
-  Future<String> createTransaction(String product_id, int qty, [String name, String phone, String email, String id]) => transactionProvider.createTransaction(product_id, qty, name, phone, email, id);
+  Future<NewTransaction> createTransaction(String product_id, int qty, [String name, String phone, String email, String id]) => transactionProvider.createTransaction(product_id, qty, name, phone, email, id);
   Future<String> updateTransaction(String id, String status) => transactionProvider.updateTransaction(id, status);
 
   final reportProvider = new ReportProvider();

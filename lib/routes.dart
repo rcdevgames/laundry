@@ -39,7 +39,9 @@ class Routes {
       case "/report": return MaterialPageRoute(builder: (_) => ReportPage());
       case "/return": return MaterialPageRoute(builder: (_) => RetrurnListPage());
       case "/setting-printer": return MaterialPageRoute(builder: (_) => SettingPrinterPage());
-      case "/transaction-print": return MaterialPageRoute(builder: (_) => TransactionPrintPage());
+      case "/transaction-print": 
+        var args = settings.arguments;
+        return MaterialPageRoute(builder: (_) => TransactionPrintPage(args));
       case "/report-print": 
         var args = settings.arguments;
         return MaterialPageRoute(builder: (_) => ReportPrintPage(args));

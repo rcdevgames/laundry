@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_alert/flutter_alert.dart';
 import 'package:indonesia/indonesia.dart';
 import 'package:laundry/models/auth_model.dart';
+import 'package:laundry/models/new_transaction_model.dart';
 import 'package:laundry/models/report_model.dart';
 import 'package:laundry/util/nav_service.dart';
 import 'package:laundry/util/session.dart';
@@ -163,7 +164,7 @@ class PrintBloc extends BlocBase {
     });
   }
 
-  printTransaction() async {
+  printTransaction(BuildContext context, NewTransaction trx) async {
     //SIZE
     // 0- normal size text
     // 1- only bold text
@@ -176,7 +177,39 @@ class PrintBloc extends BlocBase {
 
     bluetooth.isConnected.then((isConnected) {
       if (isConnected) {
-
+        bluetooth.printCustom("${_users.value.name[0].toUpperCase()}${_users.value.name.substring(1)} Laundry",1,1);
+        bluetooth.printCustom("Indonesia",1,1);
+        bluetooth.printCustom("--------------------------------",1,1);
+        bluetooth.printCustom("Kode Trx : ${trx.id}",0,0);
+        bluetooth.printCustom("Tanggal : ${tanggal(trx.createdAt, shortMonth: true)} ${timeFormat(trx.createdAt)}",0,0);
+        bluetooth.printNewLine();
+        bluetooth.printLeftRight("Nama Produk", "(Kg) Total Biaya",1);
+        bluetooth.printCustom("--------------------------------",1,1);
+        bluetooth.printLeftRight(trx.productName, "(${trx.qty}Kg) ${rupiah(trx.total)}",1);
+        bluetooth.printLeftRight("@${rupiah(trx.price)}", "",1);
+        bluetooth.printCustom("--------------------------------",1,1);
+        bluetooth.printLeftRight("Sub Total", rupiah(trx.total),1);
+        bluetooth.printNewLine();
+        bluetooth.printNewLine();
+        bluetooth.printNewLine();
+        bluetooth.printNewLine();
+        bluetooth.paperCut();
+      } else {
+        showAlert(
+          context: context,
+          title: "Error Print",
+          body: "Printer Tidak Terhubung!",
+          actions: [
+            AlertAction(
+              onPressed: () => null,
+              text: "Batalkan"
+            ),
+            AlertAction(
+              onPressed: () => navService.navigateTo("/setting-printer"),
+              text: "Pengaturan"
+            ),
+          ]
+        );
       }
     });
   }
@@ -234,6 +267,15 @@ class PrintBloc extends BlocBase {
         );
       }
     });
+  }
+
+  String zeroPad(int data) {
+    if (data.toString().length < 2) return "0"+data.toString();
+    return data.toString();
+  }
+
+  String timeFormat(DateTime date) {
+    return zeroPad(date.hour) + ":" + zeroPad(date.minute) + ":" + zeroPad(date.second);
   }
 
 }
