@@ -6,12 +6,13 @@ import 'package:laundry/util/api.dart';
 import 'package:laundry/util/session.dart';
 
 class TransactionProvider {
-  Future<Transactions> fetchTransaction(int page, String type) async {
+  Future<Transactions> fetchTransaction(int page, String type, String search) async {
     final user = await compute(authFromJson, await sessions.load("auth"));
 
     final response = await api.post("transaction?page=$page", body: {
       "users_id": user.id,
-      "status": type
+      "status": type,
+      "invoice_no": search
     }, auth: true);
 
     if (response.statusCode == 200) {

@@ -8,6 +8,7 @@ import 'package:laundry/blocs/return_bloc.dart';
 import 'package:laundry/models/transaction_model.dart';
 import 'package:laundry/widget/error_page.dart';
 import 'package:laundry/widget/loading.dart';
+import 'package:loader_search_bar/loader_search_bar.dart';
 
 class RetrurnListPage extends StatefulWidget {
   @override
@@ -37,10 +38,17 @@ class _RetrurnListPageState extends State<RetrurnListPage> {
       children: <Widget>[
         Scaffold(
           key: _key,
-          appBar: AppBar(
-            title: Text("Daftar Pengembalian", style: TextStyle(color: Colors.white)),
-            brightness: Brightness.dark,
-            iconTheme: IconThemeData(color: Colors.white),
+          appBar: SearchBar(
+            defaultBar: AppBar(
+              title: Text("Daftar Pengembalian", style: TextStyle(color: Colors.white)),
+              brightness: Brightness.dark,
+              iconTheme: IconThemeData(color: Colors.white),
+            ),
+            onQueryChanged: (query) {
+              bloc.setProcessTRX(null);
+              bloc.fetchProcessTrasaction(search: query);
+            },
+            searchHint: "Cari Kata Kunci..",
           ),
           body: StreamBuilder(
             stream: bloc.getProcessTRX,
@@ -49,7 +57,7 @@ class _RetrurnListPageState extends State<RetrurnListPage> {
                 return BnRefreshIndicator(
                   refreshController: _refreshKey,
                   onRefresh: bloc.fetchProcessTrasaction,
-                  onLoadMore: () => (snapshot.hasData && snapshot.data.nextPageUrl != null) ? bloc.fetchProcessTrasaction(snapshot.data.nextPageUrl) : null,
+                  onLoadMore: () => (snapshot.hasData && snapshot.data.nextPageUrl != null) ? bloc.fetchProcessTrasaction(url: snapshot.data.nextPageUrl) : null,
                   child: ListView.builder(
                     itemCount: snapshot.data.data.length,
                     // separatorBuilder: (ctx, i) => Divider(),

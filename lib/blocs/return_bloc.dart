@@ -29,11 +29,11 @@ class ReturnBloc extends BlocBase {
   }
 
   //Function
-  Future fetchProcessTrasaction([String url]) async {
+  Future fetchProcessTrasaction({String url, String search}) async {
     try {
       if (url != null) {
         final uri = Uri.parse(url);
-        final data = await repo.fetchTransaction(int.parse(uri.queryParameters['page']));
+        final data = await repo.fetchTransaction(int.parse(uri.queryParameters['page']), "proses", search);
         final transaction = data.toJson();
         transaction['data'] = _trx_process.value.data + data.data;
         _trx_process.sink.add(await compute(transactionsFromJson, jsonEncode(transaction)));

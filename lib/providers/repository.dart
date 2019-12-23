@@ -38,7 +38,7 @@ class Repository {
   Future<String> deleteExpense(String id) => expenseProvider.deleteExpense(id);
 
   final transactionProvider = new TransactionProvider();
-  Future<Transactions> fetchTransaction([int page = 1, String type = "proses"]) => transactionProvider.fetchTransaction(page, type);
+  Future<Transactions> fetchTransaction([int page = 1, String type = "proses", String search = ""]) => transactionProvider.fetchTransaction(page, type, search);
   Future<NewTransaction> createTransaction(String product_id, int qty, [String name, String phone, String email, String id]) => transactionProvider.createTransaction(product_id, qty, name, phone, email, id);
   Future<String> updateTransaction(String id, String status) => transactionProvider.updateTransaction(id, status);
 
