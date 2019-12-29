@@ -9,6 +9,8 @@ import 'package:laundry/views/auth/login_page.dart';
 import 'package:laundry/views/main/layout_page.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   //Status Bar Color
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.lightBlueAccent,
